@@ -1,0 +1,1406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SUPPORT | Autonix</title>
+    <meta name="description" content="{% block description %}Autonix - Intelligent Rider Safety Assistance and Monitoring System. Advanced drowsiness detection and crash monitoring for safer driving.{% endblock %}">
+    
+    {% load static %}
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+
+<style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-red: #ff0033;
+            --secondary-red: #cc0028;
+            --dark-bg: #0a0a0a;
+            --darker-bg: #050505;
+            --light-text: #ffffff;
+            --gray-text: #888888;
+            --glow-red: rgba(255, 0, 51, 0.5);
+            --border-red: rgba(255, 0, 51, 0.3);
+        }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background: var(--dark-bg);
+            color: var(--light-text);
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Animated Background Grid */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                linear-gradient(90deg, transparent 49%, var(--border-red) 50%, transparent 51%) 0 0 / 40px 40px,
+                linear-gradient(0deg, transparent 49%, var(--border-red) 50%, transparent 51%) 0 0 / 40px 40px;
+            opacity: 0.1;
+            animation: gridMove 20s linear infinite;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        @keyframes gridMove {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(40px, 40px); }
+        }
+
+        /* Scan Line Effect */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--primary-red), transparent);
+            animation: scanLine 3s linear infinite;
+            z-index: 9999;
+            pointer-events: none;
+            box-shadow: 0 0 20px var(--glow-red);
+        }
+
+        @keyframes scanLine {
+            0% { transform: translateY(0); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: translateY(100vh); opacity: 0; }
+        }
+
+        /* Navigation */
+        .navbar {
+            background: rgba(10, 10, 10, 0.95) !important;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-red);
+            box-shadow: 0 0 20px var(--glow-red);
+            padding: 1rem 0;
+            transition: all 0.3s ease;
+        }
+
+        .navbar.scrolled {
+            padding: 0.5rem 0;
+            box-shadow: 0 5px 30px var(--glow-red);
+        }
+
+        .navbar-brand {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .navbar-brand i {
+            color: var(--primary-red);
+            animation: pulse 2s ease-in-out infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); filter: drop-shadow(0 0 5px var(--glow-red)); }
+            50% { transform: scale(1.1); filter: drop-shadow(0 0 15px var(--primary-red)); }
+        }
+
+        .navbar-brand:hover {
+            transform: translateX(5px);
+            color: var(--primary-red) !important;
+        }
+
+        .nav-link {
+            color: var(--light-text) !important;
+            font-weight: 500;
+            letter-spacing: 1px;
+            margin: 0 15px;
+            position: relative;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            font-size: 0.95rem;
+        }
+
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: var(--primary-red);
+            transform: translateX(-50%);
+            transition: width 0.3s ease;
+            box-shadow: 0 0 10px var(--glow-red);
+        }
+
+        .nav-link:hover {
+            color: var(--primary-red) !important;
+            transform: translateY(-2px);
+        }
+
+        .nav-link:hover::before {
+            width: 100%;
+        }
+
+        .navbar-toggler {
+            border: 1px solid var(--primary-red);
+            background: rgba(255, 0, 51, 0.1);
+        }
+
+        .navbar-toggler-icon {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(255, 0, 51, 1)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+        }
+
+        /* Main Content */
+        .main-content {
+            min-height: calc(100vh - 80px);
+            padding-top: 80px;
+        }
+
+        /* Alert Messages */
+        .alert {
+            border: 1px solid var(--border-red);
+            background: rgba(255, 0, 51, 0.1);
+            color: var(--light-text);
+            border-radius: 8px;
+            animation: slideInDown 0.5s ease;
+        }
+
+        @keyframes slideInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Footer */
+        footer {
+            background: var(--darker-bg);
+            border-top: 1px solid var(--border-red);
+            position: relative;
+        }
+
+        footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--primary-red), transparent);
+            animation: borderGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes borderGlow {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        footer h5, footer h6 {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--primary-red);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 1.5rem;
+        }
+
+        footer .social-links a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border: 1px solid var(--border-red);
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            background: rgba(255, 0, 51, 0.05);
+        }
+
+        footer .social-links a:hover {
+            background: var(--primary-red);
+            border-color: var(--primary-red);
+            transform: translateY(-5px) scale(1.1);
+            box-shadow: 0 5px 20px var(--glow-red);
+        }
+
+        footer a {
+            transition: all 0.3s ease;
+            position: relative;
+            padding-left: 20px;
+        }
+
+        footer a::before {
+            content: '▸';
+            position: absolute;
+            left: 0;
+            color: var(--primary-red);
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        footer a:hover {
+            color: var(--primary-red) !important;
+            padding-left: 25px;
+        }
+
+        footer a:hover::before {
+            opacity: 1;
+        }
+
+        /* Update the footer styles in your base.html <style> section */
+
+/* Keep the existing footer a styles but add specificity */
+footer ul a,
+footer .quick-links a {
+    transition: all 0.3s ease;
+    position: relative;
+    padding-left: 20px;
+}
+
+footer ul a::before,
+footer .quick-links a::before {
+    content: '▸';
+    position: absolute;
+    left: 0;
+    color: var(--primary-red);
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+footer ul a:hover,
+footer .quick-links a:hover {
+    color: var(--primary-red) !important;
+    padding-left: 25px;
+}
+
+footer ul a:hover::before,
+footer .quick-links a:hover::before {
+    opacity: 1;
+}
+
+/* Override styles for social links specifically */
+footer .social-links a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border: 1px solid var(--border-red);
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    background: rgba(255, 0, 51, 0.05);
+    padding-left: 0 !important; /* Override the padding */
+    position: static; /* Override position relative */
+}
+
+footer .social-links a::before {
+    content: none; /* Remove the arrow */
+}
+
+footer .social-links a:hover {
+    background: var(--primary-red);
+    border-color: var(--primary-red);
+    transform: translateY(-5px) scale(1.1);
+    box-shadow: 0 5px 20px var(--glow-red);
+    padding-left: 0 !important; /* Keep it centered on hover */
+}
+
+footer .social-links a i {
+    font-size: 1.1rem;
+}
+
+        .badge {
+            font-family: 'Orbitron', sans-serif;
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--primary-red);
+            background: rgba(255, 0, 51, 0.1);
+            animation: fadeInScale 1s ease;
+        }
+
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--darker-bg);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-red);
+            border-radius: 5px;
+            box-shadow: 0 0 10px var(--glow-red);
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--secondary-red);
+        }
+
+        /* Loading Animation */
+        .page-loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--dark-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            transition: opacity 0.5s ease;
+        }
+
+        .page-loader.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .loader-icon {
+            width: 80px;
+            height: 80px;
+            border: 3px solid transparent;
+            border-top-color: var(--primary-red);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            position: relative;
+        }
+
+        .loader-icon::before {
+            content: '';
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            right: 5px;
+            bottom: 5px;
+            border: 3px solid transparent;
+            border-top-color: var(--secondary-red);
+            border-radius: 50%;
+            animation: spin 2s linear infinite reverse;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Glitch Effect for Brand */
+        .glitch {
+            position: relative;
+        }
+
+        .glitch::before,
+        .glitch::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0.8;
+        }
+
+        .glitch::before {
+            animation: glitch-1 2s infinite;
+            color: var(--primary-red);
+            z-index: -1;
+        }
+
+        .glitch::after {
+            animation: glitch-2 2s infinite;
+            color: #00ffff;
+            z-index: -2;
+        }
+
+        @keyframes glitch-1 {
+            0%, 100% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+        }
+
+        @keyframes glitch-2 {
+            0%, 100% { transform: translate(0); }
+            20% { transform: translate(2px, -2px); }
+            40% { transform: translate(2px, 2px); }
+            60% { transform: translate(-2px, -2px); }
+            80% { transform: translate(-2px, 2px); }
+        }
+    </style>
+   
+</head>
+<body>
+    <!-- Page Loader -->
+    <div class="page-loader" id="pageLoader">
+        <div class="loader-icon"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top" id="mainNav">
+        <div class="container">
+            <a class="navbar-brand" href="index.html" data-text="AUTONIX">
+                <i class="fas fa-shield-alt"></i>AUTONIX
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">
+                            <i class="fas fa-home"></i> Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="features.html">
+                            <i class="fas fa-bolt"></i> Features
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="screenshots.html">
+                            <i class="fas fa-images"></i> Screenshots
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="dowmnload.html">
+                            <i class="fas fa-download"></i> Download
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="support.html">
+                            <i class="fas fa-headset"></i> Support
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+<!-- Hero Section -->
+<section class="support-hero position-relative overflow-hidden">
+    <div class="circuit-bg"></div>
+    <div class="container">
+        <div class="text-center py-5">
+            <div class="hero-icon mb-4" data-aos="zoom-in">
+                <i class="fas fa-headset"></i>
+            </div>
+            <h1 class="hero-title mb-4" data-aos="fade-up">SUPPORT & CONTACT</h1>
+            <p class="hero-subtitle" data-aos="fade-up" data-aos-delay="100">
+                Get help with Autonix or reach out to our development team
+            </p>
+        </div>
+    </div>
+</section>
+
+<section class="faq-section py-5">
+    <div class="container">
+        <div class="section-header text-center mb-5" data-aos="fade-up">
+            <div class="section-badge">
+                <i class="fas fa-question-circle me-2"></i>FAQ
+            </div>
+            <h2 class="section-title">FREQUENTLY ASKED QUESTIONS</h2>
+            <p class="section-subtitle">Find quick answers to common questions about Autonix</p>
+        </div>
+        
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="faq-container">
+                    
+                    <div class="faq-item" data-aos="fade-up" data-aos-delay="100">
+                        <div class="faq-question" data-bs-toggle="collapse" data-bs-target="#faq1">
+                            <div class="question-icon">
+                                <i class="fas fa-chevron-right"></i>
+                            </div>
+                            <div class="question-text">
+                                <span class="question-number">01</span>
+                                How does the Drowsiness Detection System work?
+                            </div>
+                        </div>
+                        <div id="faq1" class="faq-answer collapse">
+                            <div class="answer-content">
+                                <p>The system uses the front-facing camera and MediaPipe FaceMesh to track the driver's eyes. It calculates the <b>Eye Aspect Ratio (EAR)</b> in real-time. If the EAR drops below a critical threshold for a sustained period, indicating closed eyes, the system triggers progressive visual and audio alerts.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item" data-aos="fade-up" data-aos-delay="200">
+                        <div class="faq-question" data-bs-toggle="collapse" data-bs-target="#faq2">
+                            <div class="question-icon">
+                                <i class="fas fa-chevron-right"></i>
+                            </div>
+                            <div class="question-text">
+                                <span class="question-number">02</span>
+                                Does Autonix require a permanent internet connection?
+                            </div>
+                        </div>
+                        <div id="faq2" class="faq-answer collapse">
+                            <div class="answer-content">
+                                <p>No. Core safety features like <b>Drowsiness Detection</b> and <b>Crash Detection</b> work completely offline using on-device processing. Internet is only required for map updates, sending emergency SMS alerts with GPS coordinates, and uploading trip analytics data.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="faq-item" data-aos="fade-up" data-aos-delay="300">
+                        <div class="faq-question" data-bs-toggle="collapse" data-bs-target="#faq3">
+                            <div class="question-icon">
+                                <i class="fas fa-chevron-right"></i>
+                            </div>
+                            <div class="question-text">
+                                <span class="question-number">03</span>
+                                What happens during a Crash Detection event?
+                            </div>
+                        </div>
+                        <div id="faq3" class="faq-answer collapse">
+                            <div class="answer-content">
+                                <p>Upon detecting a high G-force impact using the accelerometer, the app starts a <b>30-second countdown</b>. If the driver does not cancel the alarm within this time, the app automatically sends an emergency SMS with the <b>precise GPS location</b> to a pre-defined contact (or emergency services, depending on setup).</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="faq-item" data-aos="fade-up" data-aos-delay="400">
+                        <div class="faq-question" data-bs-toggle="collapse" data-bs-target="#faq4">
+                            <div class="question-icon">
+                                <i class="fas fa-chevron-right"></i>
+                            </div>
+                            <div class="question-text">
+                                <span class="question-number">04</span>
+                                Is the Autonix app compatible with iOS devices?
+                            </div>
+                        </div>
+                        <div id="faq4" class="faq-answer collapse">
+                            <div class="answer-content">
+                                <p>Currently, <b>Autonix is only available for Android devices</b> running version 8.0 (Oreo) or higher. An iOS version is planned for future development, but we do not have a specific release date yet.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="contact-info py-5">
+    <div class="info-grid-bg"></div>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="contact-box" data-aos="zoom-in">
+                    <div class="box-corner tl"></div>
+                    <div class="box-corner tr"></div>
+                    <div class="box-corner bl"></div>
+                    <div class="box-corner br"></div>
+                    
+                    <div class="text-center mb-5">
+                        <h2 class="contact-heading">CONTACT THE TEAM</h2>
+                        <div class="heading-line"></div>
+                        <p class="contact-subtitle">Reach out directly for support, collaboration, or complaints.</p>
+                    </div>
+                    
+                    <div class="row g-4 text-center">
+                        
+                        <div class="col-md-6">
+                            <div class="info-card">
+                                <div class="info-icon">
+                                    <i class="fas fa-envelope"></i>
+                                </div>
+                                <h5 class="info-title">COMPLAINTS/SUPPORT</h5>
+                                <p class="info-text"><a href="mailto:maizAH@gmail.com">maizAH@gmail.com</a></p>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="info-card">
+                                <div class="info-icon">
+                                    <i class="fas fa-laptop-code"></i>
+                                </div>
+                                <h5 class="info-title">TECHNICAL/BUSINESS</h5>
+                                <p class="info-text"><a href="mailto:yatin.a.anchan@gmail.com">yatin.a.anchan@gmail.com</a></p>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="info-card info-card-large">
+                                <div class="info-icon">
+                                    <i class="fas fa-university"></i>
+                                </div>
+                                <h5 class="info-title">DEVELOPED AT</h5>
+                                <p class="info-text">Royal College of Arts, Science & Commerce, Mira Road (East)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="support-resources py-5">
+    <div class="container">
+        <div class="section-header text-center mb-5" data-aos="fade-up">
+            <div class="section-badge">
+                <i class="fas fa-book-open me-2"></i>RESOURCES
+            </div>
+            <h2 class="section-title">ADDITIONAL RESOURCES</h2>
+            <p class="section-subtitle">Helpful resources and documentation</p>
+        </div>
+        
+        <div class="row g-4">
+            
+            <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="100">
+                <div class="resource-card">
+                    <div class="resource-icon">
+                        <i class="fas fa-book"></i>
+                        <div class="icon-ring"></div>
+                    </div>
+                    <h5 class="resource-title">USER MANUAL</h5>
+                    <p class="resource-description">Complete guide to using Autonix features and settings</p>
+                    <a href="/docs/user-manual.pdf" class="resource-link">
+                        VIEW GUIDE <i class="fas fa-arrow-right ms-2"></i>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="200">
+                <div class="resource-card">
+                    <div class="resource-icon">
+                        <i class="fas fa-tools"></i>
+                        <div class="icon-ring"></div>
+                    </div>
+                    <h5 class="resource-title">TROUBLESHOOTING</h5>
+                    <p class="resource-description">Solutions to common issues and technical problems</p>
+                    <a href="/support/troubleshooting" class="resource-link">
+                        GET HELP <i class="fas fa-arrow-right ms-2"></i>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="300">
+                <div class="resource-card">
+                    <div class="resource-icon">
+                        <i class="fab fa-github"></i>
+                        <div class="icon-ring"></div>
+                    </div>
+                    <h5 class="resource-title">SOURCE CODE</h5>
+                    <p class="resource-description">Access the open-source codebase and contribute</p>
+                    <a href="https://github.com/maizah-yatin/autonix-app" class="resource-link">
+                        VIEW CODE <i class="fas fa-arrow-right ms-2"></i>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="400">
+                <div class="resource-card">
+                    <div class="resource-icon">
+                        <i class="fas fa-comments"></i>
+                        <div class="icon-ring"></div>
+                    </div>
+                    <h5 class="resource-title">COMMUNITY</h5>
+                    <p class="resource-description">Join discussions and connect with other users</p>
+                    <a href="/community/forum" class="resource-link">
+                        JOIN NOW <i class="fas fa-arrow-right ms-2"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+---
+
+
+
+<style>
+/* Support Hero */
+.support-hero {
+    padding: 8rem 0 4rem;
+    background: linear-gradient(135deg, rgba(255, 0, 51, 0.15), rgba(10, 10, 10, 0.9));
+}
+
+.circuit-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        radial-gradient(circle at 20% 50%, var(--border-red) 2px, transparent 2px),
+        radial-gradient(circle at 80% 50%, var(--border-red) 2px, transparent 2px);
+    background-size: 100px 100px;
+    opacity: 0.1;
+    animation: circuitPulse 4s ease-in-out infinite;
+}
+
+@keyframes circuitPulse {
+    0%, 100% { opacity: 0.1; }
+    50% { opacity: 0.2; }
+}
+
+.hero-icon {
+    width: 100px;
+    height: 100px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 0, 51, 0.1);
+    border: 2px solid var(--border-red);
+    border-radius: 50%;
+    position: relative;
+}
+
+.hero-icon::after {
+    content: '';
+    position: absolute;
+    inset: -15px;
+    border: 1px solid var(--border-red);
+    border-radius: 50%;
+    animation: iconWave 3s linear infinite;
+}
+
+@keyframes iconWave {
+    0% { transform: scale(1); opacity: 1; }
+    100% { transform: scale(1.8); opacity: 0; }
+}
+
+.hero-icon i {
+    font-size: 3rem;
+    color: var(--primary-red);
+}
+
+.hero-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(2.5rem, 6vw, 4rem);
+    font-weight: 900;
+    letter-spacing: 5px;
+}
+
+.hero-subtitle {
+    font-size: 1.2rem;
+    color: var(--gray-text);
+}
+
+/* FAQ Section */
+.section-badge {
+    display: inline-block;
+    padding: 0.5rem 1.5rem;
+    background: rgba(255, 0, 51, 0.1);
+    border: 1px solid var(--border-red);
+    border-radius: 30px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.85rem;
+    letter-spacing: 2px;
+    margin-bottom: 1rem;
+}
+
+.section-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 700;
+    letter-spacing: 3px;
+    margin-bottom: 1rem;
+}
+
+.section-subtitle {
+    font-size: 1.1rem;
+    color: var(--gray-text);
+}
+
+.faq-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.faq-item {
+    background: rgba(255, 0, 51, 0.05);
+    border: 1px solid var(--border-red);
+    border-radius: 10px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.faq-item:hover {
+    border-color: var(--primary-red);
+    box-shadow: 0 5px 20px var(--glow-red);
+}
+
+.faq-question {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1.5rem 2rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    user-select: none;
+}
+
+.faq-question:hover {
+    background: rgba(255, 0, 51, 0.1);
+}
+
+.question-icon {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 0, 51, 0.1);
+    border: 2px solid var(--border-red);
+    border-radius: 50%;
+    flex-shrink: 0;
+    transition: all 0.3s ease;
+}
+
+.question-icon i {
+    color: var(--primary-red);
+    transition: transform 0.3s ease;
+}
+
+.faq-question[aria-expanded="true"] .question-icon i {
+    transform: rotate(90deg);
+}
+
+.question-text {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--light-text);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.question-number {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.9rem;
+    color: var(--primary-red);
+    opacity: 0.5;
+}
+
+.faq-answer {
+    border-top: 1px solid var(--border-red);
+}
+
+.answer-content {
+    padding: 1.5rem 2rem;
+    padding-left: 5.5rem;
+    color: var(--gray-text);
+    line-height: 1.8;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Contact Form */
+.contact-form-section {
+    position: relative;
+    background: rgba(10, 10, 10, 0.5);
+}
+
+.form-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: repeating-linear-gradient(
+        90deg,
+        transparent,
+        transparent 2px,
+        var(--border-red) 2px,
+        var(--border-red) 3px
+    );
+    opacity: 0.05;
+}
+
+.contact-box {
+    position: relative;
+    padding: 3rem;
+    background: rgba(255, 0, 51, 0.05);
+    border: 2px solid var(--border-red);
+    border-radius: 20px;
+}
+
+.box-corner {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    border: 3px solid var(--primary-red);
+}
+
+.box-corner.tl { top: -2px; left: -2px; border-right: none; border-bottom: none; }
+.box-corner.tr { top: -2px; right: -2px; border-left: none; border-bottom: none; }
+.box-corner.bl { bottom: -2px; left: -2px; border-right: none; border-top: none; }
+.box-corner.br { bottom: -2px; right: -2px; border-left: none; border-top: none; }
+
+.contact-heading {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 2.5rem;
+    font-weight: 700;
+    letter-spacing: 3px;
+    margin-bottom: 1rem;
+}
+
+.heading-line {
+    width: 100px;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--primary-red), transparent);
+    margin: 0 auto 1.5rem;
+}
+
+.contact-subtitle {
+    font-size: 1.1rem;
+    color: var(--gray-text);
+}
+
+.cyber-form .form-label {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+    color: var(--primary-red);
+    margin-bottom: 0.75rem;
+}
+
+.input-wrapper {
+    position: relative;
+}
+
+.cyber-form {
+    color-scheme: dark; /* Tell browser this is a dark theme */
+}
+
+.input-wrapper input,
+.input-wrapper textarea {
+    width: 100%;
+    padding: 1rem 1.5rem;
+    background: rgba(255, 0, 51, 0.05);
+    border: 1px solid var(--border-red);
+    border-radius: 8px;
+    color: var(--light-text);  /* This makes the typed text white */
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+}
+
+.input-wrapper textarea {
+    min-height: 150px;
+    resize: vertical;
+     color: var(--light-text);
+}
+
+.input-wrapper input:focus,
+.input-wrapper textarea:focus {
+    outline: none;
+    border-color: var(--primary-red);
+    box-shadow: 0 0 20px var(--glow-red);
+    background: rgba(255, 0, 51, 0.1);
+}
+
+.input-line {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: var(--primary-red);
+    transition: width 0.3s ease;
+}
+
+.input-wrapper input:focus ~ .input-line,
+.input-wrapper textarea:focus ~ .input-line {
+    width: 100%;
+}
+
+.btn-submit {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.25rem 3rem;
+    background: var(--primary-red);
+    border: 2px solid var(--primary-red);
+    color: var(--light-text);
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 600;
+    letter-spacing: 2px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    overflow: hidden;
+    clip-path: polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px));
+}
+
+.btn-submit:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px var(--glow-red);
+}
+
+.btn-icon {
+    font-size: 1.2rem;
+}
+
+.btn-glow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.3s, height 0.3s;
+}
+
+.btn-submit:hover .btn-glow {
+    width: 300px;
+    height: 300px;
+}
+
+/* Support Resources */
+.resource-card {
+    text-align: center;
+    padding: 2.5rem 2rem;
+    background: rgba(255, 0, 51, 0.05);
+    border: 2px solid var(--border-red);
+    border-radius: 15px;
+    height: 100%;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.resource-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, var(--glow-red), transparent 50%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.resource-card:hover {
+    transform: translateY(-10px);
+    border-color: var(--primary-red);
+    box-shadow: 0 20px 40px var(--glow-red);
+}
+
+.resource-card:hover::before {
+    opacity: 0.3;
+}
+
+.resource-icon {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.resource-icon i {
+    font-size: 2.5rem;
+    color: var(--primary-red);
+    position: relative;
+    z-index: 2;
+}
+
+.icon-ring {
+    position: absolute;
+    inset: 0;
+    border: 2px solid var(--border-red);
+    border-radius: 50%;
+    animation: ringPulse 3s ease-in-out infinite;
+}
+
+@keyframes ringPulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.3); opacity: 0; }
+}
+
+.resource-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+    margin-bottom: 1rem;
+    position: relative;
+    z-index: 2;
+}
+
+.resource-description {
+    font-size: 0.95rem;
+    color: var(--gray-text);
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+    position: relative;
+    z-index: 2;
+}
+
+.resource-link {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+    color: var(--primary-red);
+    text-decoration: none;
+    transition: all 0.3s ease;
+    position: relative;
+    z-index: 2;
+}
+
+.resource-link:hover {
+    color: var(--light-text);
+    padding-left: 10px;
+}
+
+/* Contact Information */
+.contact-info {
+    padding: 6rem 0;
+    position: relative;
+    background: linear-gradient(135deg, rgba(255, 0, 51, 0.05), rgba(10, 10, 10, 0.9));
+}
+
+.info-grid-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+        linear-gradient(90deg, var(--border-red) 1px, transparent 1px),
+        linear-gradient(0deg, var(--border-red) 1px, transparent 1px);
+    background-size: 40px 40px;
+    opacity: 0.05;
+}
+
+.info-card {
+    text-align: center;
+    padding: 3rem 2rem;
+    background: rgba(255, 0, 51, 0.05);
+    border: 2px solid var(--border-red);
+    border-radius: 15px;
+    transition: all 0.3s ease;
+    height: 100%;
+}
+
+.info-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px var(--glow-red);
+    border-color: var(--primary-red);
+}
+
+.info-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 0, 51, 0.1);
+    border: 2px solid var(--border-red);
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+.info-card:hover .info-icon {
+    transform: rotateY(360deg);
+    border-color: var(--primary-red);
+}
+
+.info-icon i {
+    font-size: 2.5rem;
+    color: var(--primary-red);
+}
+
+.info-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+    margin-bottom: 1rem;
+}
+
+.info-text {
+    font-size: 1rem;
+    color: var(--gray-text);
+    line-height: 1.6;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .contact-box { padding: 2rem 1.5rem; }
+    .answer-content { padding-left: 2rem; }
+    .faq-question { padding: 1rem 1.5rem; }
+}
+</style>
+
+<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+    // Initialize AOS (assuming you have the AOS library linked)
+    AOS.init({ duration: 800, once: true });
+
+    // Page Loader removal logic
+    var pageloader = document.getElementById('pageLoader');
+    window.addEventListener('load', function() {
+        if (pageloader) {
+            pageloader.style.display = "none";
+        }
+    });
+    
+    // --- FAQ Accordion Logic (Vanilla JS) ---
+    document.querySelectorAll('.faq-question').forEach(question => {
+        question.addEventListener('click', function() {
+            // 1. Target the elements
+            const targetId = this.getAttribute('data-bs-target');
+            const answerElement = document.querySelector(targetId);
+            const icon = this.querySelector('.question-icon i');
+
+            // 2. Toggle the visual state (aria-expanded)
+            const isExpanded = this.getAttribute('aria-expanded') === 'true' || false;
+            this.setAttribute('aria-expanded', !isExpanded);
+
+            // 3. Toggle the Bootstrap collapse classes
+            if (answerElement.classList.contains('show')) {
+                // If currently open, close it (remove 'show')
+                answerElement.classList.remove('show');
+                icon.style.transform = 'rotate(0deg)'; // Rotate icon back
+            } else {
+                // Before opening, close all other open answers
+                document.querySelectorAll('.faq-answer.show').forEach(openAnswer => {
+                    openAnswer.classList.remove('show');
+                    // Find and reset the corresponding question's icon/aria
+                    const openQuestion = document.querySelector(`[data-bs-target="#${openAnswer.id}"]`);
+                    if (openQuestion) {
+                        openQuestion.setAttribute('aria-expanded', 'false');
+                        const openIcon = openQuestion.querySelector('.question-icon i');
+                        if (openIcon) {
+                            openIcon.style.transform = 'rotate(0deg)';
+                        }
+                    }
+                });
+
+                // Open the clicked answer (add 'show')
+                answerElement.classList.add('show');
+                icon.style.transform = 'rotate(90deg)'; // Rotate icon to indicate open state
+            }
+        });
+    });
+    // --- END FAQ Accordion Logic ---
+</script>
+
+<!-- Footer -->
+    <footer class="py-5 mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <h5><i class="fas fa-shield-alt me-2"></i>AUTONIX</h5>
+                    <p style="color: white;">Intelligent Rider Safety Assistance and Monitoring System. Making road safety accessible to everyone.</p>
+                    <div class="social-links mt-3">
+                        <a href="https://github.com/yatin-anchan/Autonix/" class="text-white me-3"><i class="fab fa-github"></i></a>
+                        <a href="#" class="text-white me-3"><i class="fab fa-linkedin"></i></a>
+                        <a href="#" class="text-white me-3"><i class="fab fa-twitter"></i></a>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <h6>QUICK LINKS</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="home.html" class=" text-decoration-none" style="color: white;">Home</a></li>
+                        <li><a href="feature.html" class="text-decoration-none" style="color: white;">Feature</a></li>
+                        <li><a href="dowmnload.html" class="text-decoration-none" style="color: white;">Download</a></li>
+                        <li><a href="#" class="text-decoration-none" style="color: white;">Privacy Policy</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <h6>CONTACT</h6>
+                    <p style="color: white;">
+                        <i class="fas fa-envelope me-2"></i>support@autonix.app<br>
+                        <i class="fas fa-university me-2"></i>Royal College of Arts, Science & Commerce
+                    </p>
+                </div>
+            </div>
+            <hr class="my-4" style="border-color: var(--border-red);">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <p class="mb-0 " style="color: white;">&copy; 2025 Autonix. Developed by Maizah Shaikh & Yatin Anchan.</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <span class="badge">AUTONIX - SAFETY FOR ALL</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+    
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', function() {
+            const nav = document.getElementById('mainNav');
+            if (window.scrollY > 50) {
+                nav.classList.add('scrolled');
+            } else {
+                nav.classList.remove('scrolled');
+            }
+        });
+
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>

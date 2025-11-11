@@ -1,0 +1,1306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GALLERY | Autonix</title>
+    <meta name="description" content="{% block description %}Autonix - Intelligent Rider Safety Assistance and Monitoring System. Advanced drowsiness detection and crash monitoring for safer driving.{% endblock %}">
+    
+    {% load static %}
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+
+<style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-red: #ff0033;
+            --secondary-red: #cc0028;
+            --dark-bg: #0a0a0a;
+            --darker-bg: #050505;
+            --light-text: #ffffff;
+            --gray-text: #888888;
+            --glow-red: rgba(255, 0, 51, 0.5);
+            --border-red: rgba(255, 0, 51, 0.3);
+        }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background: var(--dark-bg);
+            color: var(--light-text);
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Animated Background Grid */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                linear-gradient(90deg, transparent 49%, var(--border-red) 50%, transparent 51%) 0 0 / 40px 40px,
+                linear-gradient(0deg, transparent 49%, var(--border-red) 50%, transparent 51%) 0 0 / 40px 40px;
+            opacity: 0.1;
+            animation: gridMove 20s linear infinite;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        @keyframes gridMove {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(40px, 40px); }
+        }
+
+        /* Scan Line Effect */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--primary-red), transparent);
+            animation: scanLine 3s linear infinite;
+            z-index: 9999;
+            pointer-events: none;
+            box-shadow: 0 0 20px var(--glow-red);
+        }
+
+        @keyframes scanLine {
+            0% { transform: translateY(0); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: translateY(100vh); opacity: 0; }
+        }
+
+        /* Navigation */
+        .navbar {
+            background: rgba(10, 10, 10, 0.95) !important;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-red);
+            box-shadow: 0 0 20px var(--glow-red);
+            padding: 1rem 0;
+            transition: all 0.3s ease;
+        }
+
+        .navbar.scrolled {
+            padding: 0.5rem 0;
+            box-shadow: 0 5px 30px var(--glow-red);
+        }
+
+        .navbar-brand {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .navbar-brand i {
+            color: var(--primary-red);
+            animation: pulse 2s ease-in-out infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); filter: drop-shadow(0 0 5px var(--glow-red)); }
+            50% { transform: scale(1.1); filter: drop-shadow(0 0 15px var(--primary-red)); }
+        }
+
+        .navbar-brand:hover {
+            transform: translateX(5px);
+            color: var(--primary-red) !important;
+        }
+
+        .nav-link {
+            color: var(--light-text) !important;
+            font-weight: 500;
+            letter-spacing: 1px;
+            margin: 0 15px;
+            position: relative;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            font-size: 0.95rem;
+        }
+
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: var(--primary-red);
+            transform: translateX(-50%);
+            transition: width 0.3s ease;
+            box-shadow: 0 0 10px var(--glow-red);
+        }
+
+        .nav-link:hover {
+            color: var(--primary-red) !important;
+            transform: translateY(-2px);
+        }
+
+        .nav-link:hover::before {
+            width: 100%;
+        }
+
+        .navbar-toggler {
+            border: 1px solid var(--primary-red);
+            background: rgba(255, 0, 51, 0.1);
+        }
+
+        .navbar-toggler-icon {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(255, 0, 51, 1)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+        }
+
+        /* Main Content */
+        .main-content {
+            min-height: calc(100vh - 80px);
+            padding-top: 80px;
+        }
+
+        /* Alert Messages */
+        .alert {
+            border: 1px solid var(--border-red);
+            background: rgba(255, 0, 51, 0.1);
+            color: var(--light-text);
+            border-radius: 8px;
+            animation: slideInDown 0.5s ease;
+        }
+
+        @keyframes slideInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Footer */
+        footer {
+            background: var(--darker-bg);
+            border-top: 1px solid var(--border-red);
+            position: relative;
+        }
+
+        footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--primary-red), transparent);
+            animation: borderGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes borderGlow {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        footer h5, footer h6 {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--primary-red);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 1.5rem;
+        }
+
+        footer .social-links a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border: 1px solid var(--border-red);
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            background: rgba(255, 0, 51, 0.05);
+        }
+
+        footer .social-links a:hover {
+            background: var(--primary-red);
+            border-color: var(--primary-red);
+            transform: translateY(-5px) scale(1.1);
+            box-shadow: 0 5px 20px var(--glow-red);
+        }
+
+        footer a {
+            transition: all 0.3s ease;
+            position: relative;
+            padding-left: 20px;
+        }
+
+        footer a::before {
+            content: '▸';
+            position: absolute;
+            left: 0;
+            color: var(--primary-red);
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        footer a:hover {
+            color: var(--primary-red) !important;
+            padding-left: 25px;
+        }
+
+        footer a:hover::before {
+            opacity: 1;
+        }
+
+        /* Update the footer styles in your base.html <style> section */
+
+/* Keep the existing footer a styles but add specificity */
+footer ul a,
+footer .quick-links a {
+    transition: all 0.3s ease;
+    position: relative;
+    padding-left: 20px;
+}
+
+footer ul a::before,
+footer .quick-links a::before {
+    content: '▸';
+    position: absolute;
+    left: 0;
+    color: var(--primary-red);
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+footer ul a:hover,
+footer .quick-links a:hover {
+    color: var(--primary-red) !important;
+    padding-left: 25px;
+}
+
+footer ul a:hover::before,
+footer .quick-links a:hover::before {
+    opacity: 1;
+}
+
+/* Override styles for social links specifically */
+footer .social-links a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border: 1px solid var(--border-red);
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    background: rgba(255, 0, 51, 0.05);
+    padding-left: 0 !important; /* Override the padding */
+    position: static; /* Override position relative */
+}
+
+footer .social-links a::before {
+    content: none; /* Remove the arrow */
+}
+
+footer .social-links a:hover {
+    background: var(--primary-red);
+    border-color: var(--primary-red);
+    transform: translateY(-5px) scale(1.1);
+    box-shadow: 0 5px 20px var(--glow-red);
+    padding-left: 0 !important; /* Keep it centered on hover */
+}
+
+footer .social-links a i {
+    font-size: 1.1rem;
+}
+
+        .badge {
+            font-family: 'Orbitron', sans-serif;
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--primary-red);
+            background: rgba(255, 0, 51, 0.1);
+            animation: fadeInScale 1s ease;
+        }
+
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--darker-bg);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-red);
+            border-radius: 5px;
+            box-shadow: 0 0 10px var(--glow-red);
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--secondary-red);
+        }
+
+        /* Loading Animation */
+        .page-loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--dark-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            transition: opacity 0.5s ease;
+        }
+
+        .page-loader.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .loader-icon {
+            width: 80px;
+            height: 80px;
+            border: 3px solid transparent;
+            border-top-color: var(--primary-red);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            position: relative;
+        }
+
+        .loader-icon::before {
+            content: '';
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            right: 5px;
+            bottom: 5px;
+            border: 3px solid transparent;
+            border-top-color: var(--secondary-red);
+            border-radius: 50%;
+            animation: spin 2s linear infinite reverse;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Glitch Effect for Brand */
+        .glitch {
+            position: relative;
+        }
+
+        .glitch::before,
+        .glitch::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0.8;
+        }
+
+        .glitch::before {
+            animation: glitch-1 2s infinite;
+            color: var(--primary-red);
+            z-index: -1;
+        }
+
+        .glitch::after {
+            animation: glitch-2 2s infinite;
+            color: #00ffff;
+            z-index: -2;
+        }
+
+        @keyframes glitch-1 {
+            0%, 100% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+        }
+
+        @keyframes glitch-2 {
+            0%, 100% { transform: translate(0); }
+            20% { transform: translate(2px, -2px); }
+            40% { transform: translate(2px, 2px); }
+            60% { transform: translate(-2px, -2px); }
+            80% { transform: translate(-2px, 2px); }
+        }
+    </style>
+   
+</head>
+<body>
+    <!-- Page Loader -->
+    <div class="page-loader" id="pageLoader">
+        <div class="loader-icon"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top" id="mainNav">
+        <div class="container">
+            <a class="navbar-brand" href="index.html" data-text="AUTONIX">
+                <i class="fas fa-shield-alt"></i>AUTONIX
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">
+                            <i class="fas fa-home"></i> Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="features.html">
+                            <i class="fas fa-bolt"></i> Features
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="screenshots.html">
+                            <i class="fas fa-images"></i> Screenshots
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="dowmnload.html">
+                            <i class="fas fa-download"></i> Download
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="support.html">
+                            <i class="fas fa-headset"></i> Support
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+<!-- Hero Section -->
+<section class="screenshots-hero position-relative overflow-hidden">
+    <div class="hex-pattern"></div>
+    <div class="container">
+        <div class="text-center py-5">
+            <div class="hero-icon mb-4" data-aos="zoom-in">
+                <i class="fas fa-images"></i>
+            </div>
+            <h1 class="hero-title mb-4" data-aos="fade-up">APP SCREENSHOTS</h1>
+            <p class="hero-subtitle" data-aos="fade-up" data-aos-delay="100">
+                Explore Autonix's intuitive interface and powerful safety features
+            </p>
+        </div>
+    </div>
+</section>
+
+<section class="screenshots-gallery py-5">
+    <div class="container-fluid">
+        <div class="scroll-container" data-aos="fade-up">
+            <div class="scroll-wrapper">
+                
+                <div class="screenshot-item">
+                    <div class="screenshot-wrapper">
+                        <div class="screenshot-frame">
+                            <div class="frame-border tl"></div>
+                            <div class="frame-border tr"></div>
+                            <div class="frame-border bl"></div>
+                            <div class="frame-border br"></div>
+                            
+                            <div class="screenshot-image">
+                                <img src="images/screenshots/screenshot-1.png" 
+                                    alt="Real-time Dashboard" 
+                                    class="img-fluid">
+                            </div>
+                        </div>
+                        
+                        <div class="screenshot-info">
+                            <div class="info-number">01</div>
+                            <h5 class="info-title">Real-time Dashboard</h5>
+                            <p class="info-description">Instant overview of driver status, location, and key safety metrics on a single screen.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="screenshot-item">
+                    <div class="screenshot-wrapper">
+                        <div class="screenshot-frame">
+                            <div class="frame-border tl"></div>
+                            <div class="frame-border tr"></div>
+                            <div class="frame-border bl"></div>
+                            <div class="frame-border br"></div>
+                            
+                            <div class="screenshot-image">
+                                <img src="images/screenshots/screenshot-2.png" 
+                                    alt="Drowsiness Alert Interface" 
+                                    class="img-fluid">
+                            </div>
+                        </div>
+                        
+                        <div class="screenshot-info">
+                            <div class="info-number">02</div>
+                            <h5 class="info-title">Drowsiness Alert Interface</h5>
+                            <p class="info-description">Visual representation of the Eye Aspect Ratio (EAR) and system warning status.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="screenshot-item">
+                    <div class="screenshot-wrapper">
+                        <div class="screenshot-frame">
+                            <div class="frame-border tl"></div>
+                            <div class="frame-border tr"></div>
+                            <div class="frame-border bl"></div>
+                            <div class="frame-border br"></div>
+                            
+                            <div class="screenshot-image">
+                                <img src="images/screenshots/screenshot-3.png" 
+                                    alt="Trip History and Analytics" 
+                                    class="img-fluid">
+                            </div>
+                        </div>
+                        
+                        <div class="screenshot-info">
+                            <div class="info-number">03</div>
+                            <h5 class="info-title">Trip History and Analytics</h5>
+                            <p class="info-description">Detailed log of past journeys, including route, speed, and safety event timeline.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="screenshot-item">
+                    <div class="screenshot-wrapper">
+                        <div class="screenshot-frame">
+                            <div class="frame-border tl"></div>
+                            <div class="frame-border tr"></div>
+                            <div class="frame-border bl"></div>
+                            <div class="frame-border br"></div>
+                            
+                            <div class="screenshot-image">
+                                <img src="images/screenshots/screenshot-4.png" 
+                                    alt="Emergency SOS Confirmation" 
+                                    class="img-fluid">
+                            </div>
+                        </div>
+                        
+                        <div class="screenshot-info">
+                            <div class="info-number">04</div>
+                            <h5 class="info-title">Emergency SOS Confirmation</h5>
+                            <p class="info-description">Screen showing the 30-second countdown for automatic emergency services contact.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="screenshot-item">
+                    <div class="screenshot-wrapper">
+                        <div class="screenshot-frame">
+                            <div class="frame-border tl"></div>
+                            <div class="frame-border tr"></div>
+                            <div class="frame-border bl"></div>
+                            <div class="frame-border br"></div>
+                            
+                            <div class="screenshot-image">
+                                <img src="images/screenshots/screenshot-5.png" 
+                                    alt="Navigation Planner" 
+                                    class="img-fluid">
+                            </div>
+                        </div>
+                        
+                        <div class="screenshot-info">
+                            <div class="info-number">05</div>
+                            <h5 class="info-title">Navigation Planner</h5>
+                            <p class="info-description">Part of the app where you can plan trips <br> <b>(Work in progress)</b></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="screenshot-item">
+                    <div class="screenshot-wrapper">
+                        <div class="screenshot-frame">
+                            <div class="frame-border tl"></div>
+                            <div class="frame-border tr"></div>
+                            <div class="frame-border bl"></div>
+                            <div class="frame-border br"></div>
+                            
+                            <div class="screenshot-image">
+                                <img src="images/screenshots/screenshot-6.png" 
+                                    alt="Navigation Planner" 
+                                    class="img-fluid">
+                            </div>
+                        </div>
+                        
+                        <div class="screenshot-info">
+                            <div class="info-number">06</div>
+                            <h5 class="info-title">Navigation Dashboard</h5>
+                            <p class="info-description">Navigation Dashboard with features like trip planner, fleet control <br> <b>(Work in progress)</b></p>
+                        </div>
+                    </div>
+                </div>
+                </div>
+        </div>
+        
+        <div class="scroll-hint text-center mt-4" data-aos="fade-up" data-aos-delay="200">
+            <i class="fas fa-arrow-right me-2"></i>
+            <span>SCROLL TO EXPLORE MORE</span>
+            <i class="fas fa-arrow-left ms-2"></i>
+        </div>
+    </div>
+</section>
+
+<!-- Features Highlight -->
+<section class="features-highlight py-5">
+    <div class="highlight-bg"></div>
+    <div class="container">
+        <div class="section-header text-center mb-5" data-aos="fade-up">
+            <div class="section-badge">
+                <i class="fas fa-star me-2"></i>INTERFACE HIGHLIGHTS
+            </div>
+            <h2 class="section-title">KEY INTERFACE FEATURES</h2>
+            <p class="section-subtitle">Modern design meets functional safety monitoring</p>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="100">
+                <div class="highlight-card">
+                    <div class="highlight-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                        <div class="icon-pulse"></div>
+                    </div>
+                    <h5 class="highlight-title">INTUITIVE INTERFACE</h5>
+                    <p class="highlight-text">Clean, driver-friendly design that's easy to use while driving</p>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="200">
+                <div class="highlight-card">
+                    <div class="highlight-icon">
+                        <i class="fas fa-eye"></i>
+                        <div class="icon-pulse"></div>
+                    </div>
+                    <h5 class="highlight-title">REAL-TIME MONITORING</h5>
+                    <p class="highlight-text">Live facial detection and drowsiness monitoring display</p>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="300">
+                <div class="highlight-card">
+                    <div class="highlight-icon">
+                        <i class="fas fa-chart-line"></i>
+                        <div class="icon-pulse"></div>
+                    </div>
+                    <h5 class="highlight-title">PERFORMANCE ANALYTICS</h5>
+                    <p class="highlight-text">Detailed trip statistics and safety score tracking</p>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="400">
+                <div class="highlight-card">
+                    <div class="highlight-icon">
+                        <i class="fas fa-cog"></i>
+                        <div class="icon-pulse"></div>
+                    </div>
+                    <h5 class="highlight-title">CUSTOMIZABLE SETTINGS</h5>
+                    <p class="highlight-text">Personalize alerts and sensitivity to your preferences</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+/* Screenshots Hero */
+.screenshots-hero {
+    padding: 8rem 0 4rem;
+    background: linear-gradient(135deg, rgba(255, 0, 51, 0.1), rgba(10, 10, 10, 0.95));
+    position: relative;
+}
+
+.hex-pattern {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        linear-gradient(30deg, var(--border-red) 12%, transparent 12.5%, transparent 87%, var(--border-red) 87.5%, var(--border-red)),
+        linear-gradient(150deg, var(--border-red) 12%, transparent 12.5%, transparent 87%, var(--border-red) 87.5%, var(--border-red)),
+        linear-gradient(30deg, var(--border-red) 12%, transparent 12.5%, transparent 87%, var(--border-red) 87.5%, var(--border-red)),
+        linear-gradient(150deg, var(--border-red) 12%, transparent 12.5%, transparent 87%, var(--border-red) 87.5%, var(--border-red));
+    background-size: 80px 140px;
+    background-position: 0 0, 0 0, 40px 70px, 40px 70px;
+    opacity: 0.05;
+    animation: hexMove 20s linear infinite;
+}
+
+@keyframes hexMove {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(140px); }
+}
+
+.hero-icon {
+    font-size: 4rem;
+    color: var(--primary-red);
+    animation: iconBounce 2s ease-in-out infinite;
+}
+
+@keyframes iconBounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-15px); }
+}
+
+.hero-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(2.5rem, 5vw, 3.5rem);
+    font-weight: 700;
+    letter-spacing: 5px;
+    color: var(--light-text);
+}
+
+.hero-subtitle {
+    font-size: 1.1rem;
+    color: var(--gray-text);
+    letter-spacing: 1px;
+}
+
+/* Horizontal Scroll Gallery */
+.screenshots-gallery {
+    padding: 4rem 0;
+    overflow: hidden;
+}
+
+.scroll-container {
+    position: relative;
+    padding: 2rem 0;
+}
+
+.scroll-wrapper {
+    display: flex;
+    gap: 2rem;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 1rem 2rem;
+    scroll-behavior: smooth;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Custom Scrollbar for horizontal scroll */
+.scroll-wrapper::-webkit-scrollbar {
+    height: 8px;
+}
+
+.scroll-wrapper::-webkit-scrollbar-track {
+    background: rgba(255, 0, 51, 0.1);
+    border-radius: 10px;
+}
+
+.scroll-wrapper::-webkit-scrollbar-thumb {
+    background: var(--primary-red);
+    border-radius: 10px;
+    box-shadow: 0 0 10px var(--glow-red);
+}
+
+.scroll-wrapper::-webkit-scrollbar-thumb:hover {
+    background: var(--secondary-red);
+}
+
+.screenshot-item {
+    flex: 0 0 auto;
+    width: 300px;
+    scroll-snap-align: center;
+    scroll-snap-stop: always;
+}
+
+.screenshot-wrapper {
+    height: 100%;
+    transition: all 0.3s ease;
+}
+
+.scroll-hint {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.9rem;
+    letter-spacing: 2px;
+    color: var(--primary-red);
+    animation: hintPulse 2s ease-in-out infinite;
+}
+
+@keyframes hintPulse {
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 1; }
+}
+
+.scroll-hint i {
+    animation: arrowBounce 1.5s ease-in-out infinite;
+}
+
+@keyframes arrowBounce {
+    0%, 100% { transform: translateX(0); }
+    50% { transform: translateX(10px); }
+}
+
+.scroll-hint i:last-child {
+    animation: arrowBounceLeft 1.5s ease-in-out infinite;
+}
+
+@keyframes arrowBounceLeft {
+    0%, 100% { transform: translateX(0); }
+    50% { transform: translateX(-10px); }
+}
+
+.screenshot-frame {
+    position: relative;
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+    border-radius: 15px;
+    background: rgba(10, 10, 10, 0.8);
+}
+
+.frame-border {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    border: 2px solid var(--primary-red);
+    z-index: 2;
+}
+
+.frame-border.tl {
+    top: -1px;
+    left: -1px;
+    border-right: none;
+    border-bottom: none;
+}
+
+.frame-border.tr {
+    top: -1px;
+    right: -1px;
+    border-left: none;
+    border-bottom: none;
+}
+
+.frame-border.bl {
+    bottom: -1px;
+    left: -1px;
+    border-right: none;
+    border-top: none;
+}
+
+.frame-border.br {
+    bottom: -1px;
+    right: -1px;
+    border-left: none;
+    border-top: none;
+}
+
+.screenshot-image {
+    position: relative;
+    cursor: pointer;
+    overflow: hidden;
+    aspect-ratio: 9/16;
+}
+
+.screenshot-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.5s ease;
+}
+
+.screenshot-image:hover img {
+    transform: scale(1.1);
+}
+
+.image-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 0, 51, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.screenshot-image:hover .image-overlay {
+    opacity: 1;
+}
+
+.overlay-icon {
+    font-size: 3rem;
+    color: var(--light-text);
+    animation: expandPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes expandPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+}
+
+.scan-line {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--light-text), transparent);
+    animation: scanMove 2s linear infinite;
+}
+
+@keyframes scanMove {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(100%); }
+}
+
+.screenshot-info {
+    padding: 1.5rem;
+    background: rgba(255, 0, 51, 0.05);
+    border: 1px solid var(--border-red);
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.screenshot-wrapper:hover .screenshot-info {
+    border-color: var(--primary-red);
+    box-shadow: 0 5px 20px var(--glow-red);
+}
+
+.info-number {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--primary-red);
+    opacity: 0.3;
+    margin-bottom: 0.5rem;
+}
+
+.info-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+    margin-bottom: 0.75rem;
+    color: var(--light-text);
+}
+
+.info-description {
+    font-size: 0.95rem;
+    color: var(--gray-text);
+    line-height: 1.6;
+    margin-bottom: 0;
+}
+
+/* Modal Styles */
+.screenshot-modal .modal-content {
+    background: rgba(10, 10, 10, 0.95);
+    border: 1px solid var(--border-red);
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+.screenshot-modal .modal-header {
+    border-bottom: 1px solid var(--border-red);
+    padding: 1.5rem;
+}
+
+.screenshot-modal .modal-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.3rem;
+    letter-spacing: 1px;
+    color: var(--primary-red);
+}
+
+.screenshot-modal .modal-footer {
+    border-top: 1px solid var(--border-red);
+    padding: 1.5rem;
+}
+
+.screenshot-modal .modal-footer p {
+    color: var(--gray-text);
+    font-size: 0.95rem;
+}
+
+/* Features Highlight */
+.features-highlight {
+    padding: 4rem 0;
+    position: relative;
+}
+
+.highlight-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, transparent, rgba(255, 0, 51, 0.03));
+    pointer-events: none;
+}
+
+.highlight-card {
+    text-align: center;
+    padding: 2.5rem 1.5rem;
+    background: rgba(10, 10, 10, 0.8);
+    border: 1px solid var(--border-red);
+    border-radius: 15px;
+    height: 100%;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.highlight-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 0, 51, 0.1), transparent);
+    transition: left 0.5s;
+}
+
+.highlight-card:hover::before {
+    left: 100%;
+}
+
+.highlight-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 40px var(--glow-red);
+    border-color: var(--primary-red);
+}
+
+.highlight-icon {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid var(--border-red);
+    border-radius: 50%;
+    background: rgba(255, 0, 51, 0.05);
+}
+
+.highlight-icon i {
+    font-size: 2rem;
+    color: var(--primary-red);
+    z-index: 2;
+}
+
+.icon-pulse {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border: 2px solid var(--primary-red);
+    border-radius: 50%;
+    animation: pulseBorder 2s ease-in-out infinite;
+}
+
+@keyframes pulseBorder {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.3);
+        opacity: 0;
+    }
+}
+
+.highlight-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+    margin-bottom: 1rem;
+    color: var(--light-text);
+}
+
+.highlight-text {
+    font-size: 0.9rem;
+    color: var(--gray-text);
+    line-height: 1.6;
+    margin-bottom: 0;
+}
+
+/* Section Styles */
+.section-header {
+    margin-bottom: 3rem;
+}
+
+.section-badge {
+    display: inline-block;
+    padding: 0.5rem 1.5rem;
+    background: rgba(255, 0, 51, 0.1);
+    border: 1px solid var(--border-red);
+    border-radius: 30px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.85rem;
+    letter-spacing: 2px;
+    margin-bottom: 1rem;
+    color: var(--primary-red);
+}
+
+.section-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(2rem, 4vw, 2.5rem);
+    font-weight: 700;
+    letter-spacing: 3px;
+    margin-bottom: 1rem;
+    color: var(--light-text);
+}
+
+.section-subtitle {
+    font-size: 1.1rem;
+    color: var(--gray-text);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .screenshots-hero {
+        padding: 6rem 0 3rem;
+    }
+    
+    .hero-title {
+        font-size: 2rem;
+    }
+    
+    .screenshot-item {
+        width: 260px;
+    }
+    
+    .scroll-wrapper {
+        padding: 1rem;
+        gap: 1.5rem;
+    }
+    
+    .highlight-card {
+        padding: 2rem 1rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .screenshot-item {
+        width: 280px;
+    }
+}
+</style>
+
+<!-- AOS Animation Library -->
+<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+
+    var pageloader = document.getElementById('pageLoader');
+    window.addEventListener('load', function() {
+        pageloader.style.display = "none";
+    });
+    AOS.init({
+        duration: 800,
+        once: true,
+        offset: 100
+    });
+</script>
+
+<!-- Footer -->
+    <footer class="py-5 mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <h5><i class="fas fa-shield-alt me-2"></i>AUTONIX</h5>
+                    <p style="color: white;">Intelligent Rider Safety Assistance and Monitoring System. Making road safety accessible to everyone.</p>
+                    <div class="social-links mt-3">
+                        <a href="https://github.com/yatin-anchan/Autonix/" class="text-white me-3"><i class="fab fa-github"></i></a>
+                        <a href="#" class="text-white me-3"><i class="fab fa-linkedin"></i></a>
+                        <a href="#" class="text-white me-3"><i class="fab fa-twitter"></i></a>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <h6>QUICK LINKS</h6>
+                    <ul class="list-unstyled">
+                                                <li><a href="home.html" class=" text-decoration-none" style="color: white;">Home</a></li>
+                        <li><a href="features.html" class="text-decoration-none" style="color: white;">Feature</a></li>
+                        <li><a href="support.html" class="text-decoration-none" style="color: white;">Support</a></li>
+                        <li><a href="#" class="text-decoration-none" style="color: white;">Privacy Policy</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <h6>CONTACT</h6>
+                    <p style="color: white;">
+                        <i class="fas fa-envelope me-2"></i>support@autonix.app<br>
+                        <i class="fas fa-university me-2"></i>Royal College of Arts, Science & Commerce
+                    </p>
+                </div>
+            </div>
+            <hr class="my-4" style="border-color: var(--border-red);">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <p class="mb-0 " style="color: white;">&copy; 2025 Autonix. Developed by Maizah Shaikh & Yatin Anchan.</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <span class="badge">AUTONIX - SAFETY FOR ALL</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+    
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', function() {
+            const nav = document.getElementById('mainNav');
+            if (window.scrollY > 50) {
+                nav.classList.add('scrolled');
+            } else {
+                nav.classList.remove('scrolled');
+            }
+        });
+
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>

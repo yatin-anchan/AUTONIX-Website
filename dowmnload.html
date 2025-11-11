@@ -1,0 +1,1376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DOWNLOADS | Autonix</title>
+    <meta name="description" content="{% block description %}Autonix - Intelligent Rider Safety Assistance and Monitoring System. Advanced drowsiness detection and crash monitoring for safer driving.{% endblock %}">
+    
+    {% load static %}
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+
+<style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-red: #ff0033;
+            --secondary-red: #cc0028;
+            --dark-bg: #0a0a0a;
+            --darker-bg: #050505;
+            --light-text: #ffffff;
+            --gray-text: #888888;
+            --glow-red: rgba(255, 0, 51, 0.5);
+            --border-red: rgba(255, 0, 51, 0.3);
+        }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background: var(--dark-bg);
+            color: var(--light-text);
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Animated Background Grid */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                linear-gradient(90deg, transparent 49%, var(--border-red) 50%, transparent 51%) 0 0 / 40px 40px,
+                linear-gradient(0deg, transparent 49%, var(--border-red) 50%, transparent 51%) 0 0 / 40px 40px;
+            opacity: 0.1;
+            animation: gridMove 20s linear infinite;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        @keyframes gridMove {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(40px, 40px); }
+        }
+
+        /* Scan Line Effect */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--primary-red), transparent);
+            animation: scanLine 3s linear infinite;
+            z-index: 9999;
+            pointer-events: none;
+            box-shadow: 0 0 20px var(--glow-red);
+        }
+
+        @keyframes scanLine {
+            0% { transform: translateY(0); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: translateY(100vh); opacity: 0; }
+        }
+
+        /* Navigation */
+        .navbar {
+            background: rgba(10, 10, 10, 0.95) !important;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-red);
+            box-shadow: 0 0 20px var(--glow-red);
+            padding: 1rem 0;
+            transition: all 0.3s ease;
+        }
+
+        .navbar.scrolled {
+            padding: 0.5rem 0;
+            box-shadow: 0 5px 30px var(--glow-red);
+        }
+
+        .navbar-brand {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .navbar-brand i {
+            color: var(--primary-red);
+            animation: pulse 2s ease-in-out infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); filter: drop-shadow(0 0 5px var(--glow-red)); }
+            50% { transform: scale(1.1); filter: drop-shadow(0 0 15px var(--primary-red)); }
+        }
+
+        .navbar-brand:hover {
+            transform: translateX(5px);
+            color: var(--primary-red) !important;
+        }
+
+        .nav-link {
+            color: var(--light-text) !important;
+            font-weight: 500;
+            letter-spacing: 1px;
+            margin: 0 15px;
+            position: relative;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            font-size: 0.95rem;
+        }
+
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: var(--primary-red);
+            transform: translateX(-50%);
+            transition: width 0.3s ease;
+            box-shadow: 0 0 10px var(--glow-red);
+        }
+
+        .nav-link:hover {
+            color: var(--primary-red) !important;
+            transform: translateY(-2px);
+        }
+
+        .nav-link:hover::before {
+            width: 100%;
+        }
+
+        .navbar-toggler {
+            border: 1px solid var(--primary-red);
+            background: rgba(255, 0, 51, 0.1);
+        }
+
+        .navbar-toggler-icon {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(255, 0, 51, 1)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+        }
+
+        /* Main Content */
+        .main-content {
+            min-height: calc(100vh - 80px);
+            padding-top: 80px;
+        }
+
+        /* Alert Messages */
+        .alert {
+            border: 1px solid var(--border-red);
+            background: rgba(255, 0, 51, 0.1);
+            color: var(--light-text);
+            border-radius: 8px;
+            animation: slideInDown 0.5s ease;
+        }
+
+        @keyframes slideInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Footer */
+        footer {
+            background: var(--darker-bg);
+            border-top: 1px solid var(--border-red);
+            position: relative;
+        }
+
+        footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--primary-red), transparent);
+            animation: borderGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes borderGlow {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        footer h5, footer h6 {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--primary-red);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 1.5rem;
+        }
+
+        footer .social-links a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border: 1px solid var(--border-red);
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            background: rgba(255, 0, 51, 0.05);
+        }
+
+        footer .social-links a:hover {
+            background: var(--primary-red);
+            border-color: var(--primary-red);
+            transform: translateY(-5px) scale(1.1);
+            box-shadow: 0 5px 20px var(--glow-red);
+        }
+
+        footer a {
+            transition: all 0.3s ease;
+            position: relative;
+            padding-left: 20px;
+        }
+
+        footer a::before {
+            content: '▸';
+            position: absolute;
+            left: 0;
+            color: var(--primary-red);
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        footer a:hover {
+            color: var(--primary-red) !important;
+            padding-left: 25px;
+        }
+
+        footer a:hover::before {
+            opacity: 1;
+        }
+
+        /* Update the footer styles in your base.html <style> section */
+
+/* Keep the existing footer a styles but add specificity */
+footer ul a,
+footer .quick-links a {
+    transition: all 0.3s ease;
+    position: relative;
+    padding-left: 20px;
+}
+
+footer ul a::before,
+footer .quick-links a::before {
+    content: '▸';
+    position: absolute;
+    left: 0;
+    color: var(--primary-red);
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+footer ul a:hover,
+footer .quick-links a:hover {
+    color: var(--primary-red) !important;
+    padding-left: 25px;
+}
+
+footer ul a:hover::before,
+footer .quick-links a:hover::before {
+    opacity: 1;
+}
+
+/* Override styles for social links specifically */
+footer .social-links a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border: 1px solid var(--border-red);
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    background: rgba(255, 0, 51, 0.05);
+    padding-left: 0 !important; /* Override the padding */
+    position: static; /* Override position relative */
+}
+
+footer .social-links a::before {
+    content: none; /* Remove the arrow */
+}
+
+footer .social-links a:hover {
+    background: var(--primary-red);
+    border-color: var(--primary-red);
+    transform: translateY(-5px) scale(1.1);
+    box-shadow: 0 5px 20px var(--glow-red);
+    padding-left: 0 !important; /* Keep it centered on hover */
+}
+
+footer .social-links a i {
+    font-size: 1.1rem;
+}
+
+        .badge {
+            font-family: 'Orbitron', sans-serif;
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--primary-red);
+            background: rgba(255, 0, 51, 0.1);
+            animation: fadeInScale 1s ease;
+        }
+
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--darker-bg);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-red);
+            border-radius: 5px;
+            box-shadow: 0 0 10px var(--glow-red);
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--secondary-red);
+        }
+
+        /* Loading Animation */
+        .page-loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--dark-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            transition: opacity 0.5s ease;
+        }
+
+        .page-loader.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .loader-icon {
+            width: 80px;
+            height: 80px;
+            border: 3px solid transparent;
+            border-top-color: var(--primary-red);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            position: relative;
+        }
+
+        .loader-icon::before {
+            content: '';
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            right: 5px;
+            bottom: 5px;
+            border: 3px solid transparent;
+            border-top-color: var(--secondary-red);
+            border-radius: 50%;
+            animation: spin 2s linear infinite reverse;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Glitch Effect for Brand */
+        .glitch {
+            position: relative;
+        }
+
+        .glitch::before,
+        .glitch::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0.8;
+        }
+
+        .glitch::before {
+            animation: glitch-1 2s infinite;
+            color: var(--primary-red);
+            z-index: -1;
+        }
+
+        .glitch::after {
+            animation: glitch-2 2s infinite;
+            color: #00ffff;
+            z-index: -2;
+        }
+
+        @keyframes glitch-1 {
+            0%, 100% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+        }
+
+        @keyframes glitch-2 {
+            0%, 100% { transform: translate(0); }
+            20% { transform: translate(2px, -2px); }
+            40% { transform: translate(2px, 2px); }
+            60% { transform: translate(-2px, -2px); }
+            80% { transform: translate(-2px, 2px); }
+        }
+    </style>
+   
+</head>
+<body>
+    <!-- Page Loader -->
+    <div class="page-loader" id="pageLoader">
+        <div class="loader-icon"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top" id="mainNav">
+        <div class="container">
+            <a class="navbar-brand" href="index.html" data-text="AUTONIX">
+                <i class="fas fa-shield-alt"></i>AUTONIX
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">
+                            <i class="fas fa-home"></i> Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="features.html">
+                            <i class="fas fa-bolt"></i> Features
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="screenshots.html">
+                            <i class="fas fa-images"></i> Screenshots
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="dowmnload.html">
+                            <i class="fas fa-download"></i> Download
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="support.html">
+                            <i class="fas fa-headset"></i> Support
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+<section class="download-hero position-relative overflow-hidden">
+    <div class="data-stream"></div>
+    <div class="container">
+        <div class="text-center py-5">
+            <div class="hero-icon mb-4" data-aos="zoom-in">
+                <i class="fas fa-download"></i>
+            </div>
+            <h1 class="hero-title mb-4" data-aos="fade-up">DOWNLOAD AUTONIX</h1>
+            <p class="hero-subtitle" data-aos="fade-up" data-aos-delay="100">
+                Get the intelligent driver safety system on your Android device
+            </p>
+        </div>
+    </div>
+</section>
+
+<section id="download-options" class="download-options py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                
+                
+                <div class="version-card mb-4" data-aos="fade-up" data-aos-delay="200">
+                    <div class="card-corner tl"></div>
+                    <div class="card-corner tr"></div>
+                    <div class="card-corner bl"></div>
+                    <div class="card-corner br"></div>
+                    
+                    <div class="version-pulse"></div>
+                    
+                    <div class="row align-items-center g-4">
+                        <div class="col-md-8">
+                            <div class="version-info">
+                                <div class="version-label">VERSION</div>
+                                <h3 class="version-number">v1.2.0</h3>
+                                <p class="version-notes">Initial release featuring Drowsiness Detection and the basic Alert System. This version is considered stable but lacks many of the features present in the newer updates.</p>
+                                
+                                <div class="version-meta">
+                                    <div class="meta-item">
+                                        <i class="fas fa-calendar"></i>
+                                        <span>Sep 10, 2025</span>
+                                    </div>
+                                    <div class="meta-item">
+                                        <i class="fas fa-file-archive"></i>
+                                        <span>42.1 MB</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <a href="https://github.com/YourRepo/App/releases/download/v1.2.0/app-release.apk" class="btn-download btn-secondary-download">
+                                <span class="btn-icon"><i class="fas fa-download"></i></span>
+                                <span class="btn-text">DOWNLOAD OLD APK</span>
+                                <span class="btn-shine"></span>
+                            </a>
+                            <div class="qr-section mt-4">
+                                <div class="qr-frame">
+                                    <i class="fas fa-qrcode"></i>
+                                    <small>SCAN TO DOWNLOAD</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+        </div>
+    </div>
+</section>
+
+<section class="installation-guide py-5">
+    <div class="guide-bg"></div>
+    <div class="container">
+        
+        <div class="section-header text-center mb-5" data-aos="fade-up">
+            <div class="section-badge">
+                <i class="fas fa-book me-2"></i>GUIDE
+            </div>
+            <h2 class="section-title">INSTALLATION STEPS</h2>
+            <p class="section-subtitle">Simple steps to install Autonix on your Android device</p>
+        </div>
+        
+        <div class="row g-5">
+            
+            <div class="col-lg-6">
+                <div class="steps-container" data-aos="fade-right">
+                    
+                    <div class="step-item">
+                        <div class="step-number">
+                            <span>01</span>
+                            <div class="step-line"></div>
+                        </div>
+                        <div class="step-content">
+                            <h5 class="step-title">ENABLE UNKNOWN SOURCES</h5>
+                            <p class="step-description">Navigate to <b>Settings</b> → <b>Security</b> → Enable "<b>Unknown sources</b>" to allow APK installation from external sources.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="step-item">
+                        <div class="step-number">
+                            <span>02</span>
+                            <div class="step-line"></div>
+                        </div>
+                        <div class="step-content">
+                            <h5 class="step-title">DOWNLOAD APK FILE</h5>
+                            <p class="step-description">Click the download button above to save <b>Autonix APK file</b> to your device's download folder.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="step-item">
+                        <div class="step-number">
+                            <span>03</span>
+                        </div>
+                        <div class="step-content">
+                            <h5 class="step-title">INSTALL & LAUNCH</h5>
+                            <p class="step-description">Open the downloaded APK file from your notifications or file manager and follow the installation prompts to complete setup.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-6">
+                <div class="requirements-box" data-aos="fade-left">
+                    <h4 class="req-heading">SYSTEM REQUIREMENTS</h4>
+                    <div class="req-divider"></div>
+                    
+                    <div class="req-items">
+                        
+                        <div class="req-item">
+                            <div class="req-icon">
+                                <i class="fab fa-android"></i>
+                            </div>
+                            <div class="req-info">
+                                <h6 class="req-label">ANDROID</h6>
+                                <p class="req-spec">Version 8.0 (Oreo) or higher</p>
+                            </div>
+                            <div class="req-check"><i class="fas fa-check"></i></div>
+                        </div>
+                        
+                        <div class="req-item">
+                            <div class="req-icon">
+                                <i class="fas fa-memory"></i>
+                            </div>
+                            <div class="req-info">
+                                <h6 class="req-label">RAM</h6>
+                                <p class="req-spec">Minimum 4GB recommended</p>
+                            </div>
+                            <div class="req-check"><i class="fas fa-check"></i></div>
+                        </div>
+                        
+                        <div class="req-item">
+                            <div class="req-icon">
+                                <i class="fas fa-camera"></i>
+                            </div>
+                            <div class="req-info">
+                                <h6 class="req-label">CAMERA</h6>
+                                <p class="req-spec">Front-facing camera (720p minimum)</p>
+                            </div>
+                            <div class="req-check"><i class="fas fa-check"></i></div>
+                        </div>
+                        
+                        <div class="req-item">
+                            <div class="req-icon">
+                                <i class="fas fa-hdd"></i>
+                            </div>
+                            <div class="req-info">
+                                <h6 class="req-label">STORAGE</h6>
+                                <p class="req-spec">200MB free storage space</p>
+                            </div>
+                            <div class="req-check"><i class="fas fa-check"></i></div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Alternative Downloads -->
+<section class="alternative-downloads py-5">
+    <div class="container">
+        <div class="section-header text-center mb-5" data-aos="fade-up">
+            <div class="section-badge">
+                <i class="fas fa-cloud-download-alt me-2"></i>OPTIONS
+            </div>
+            <h2 class="section-title">ALTERNATIVE DOWNLOAD OPTIONS</h2>
+            <p class="section-subtitle">Multiple ways to get Autonix on your device</p>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-md-4" data-aos="flip-up" data-aos-delay="100">
+                <div class="alt-card">
+                    <div class="alt-icon">
+                        <i class="fab fa-google-play"></i>
+                    </div>
+                    <h5 class="alt-title">GOOGLE PLAY STORE</h5>
+                    <p class="alt-description">Coming soon to Google Play Store with automatic updates and security</p>
+                    <button class="btn-alt disabled">
+                        <i class="fas fa-clock me-2"></i>COMING SOON
+                    </button>
+                </div>
+            </div>
+            
+            <div class="col-md-4" data-aos="flip-up" data-aos-delay="200">
+                <div class="alt-card">
+                    <div class="alt-icon">
+                        <i class="fab fa-github"></i>
+                    </div>
+                    <h5 class="alt-title">GITHUB RELEASES</h5>
+                    <p class="alt-description">Download source code and pre-built APKs from our GitHub repository</p>
+                    <a href="#" class="btn-alt">
+                        <i class="fas fa-external-link-alt me-2"></i>VIEW ON GITHUB
+                    </a>
+                </div>
+            </div>
+            
+            <div class="col-md-4" data-aos="flip-up" data-aos-delay="300">
+                <div class="alt-card">
+                    <div class="alt-icon">
+                        <i class="fas fa-cloud-download-alt"></i>
+                    </div>
+                    <h5 class="alt-title">DIRECT DOWNLOAD</h5>
+                    <p class="alt-description">Download directly from our secure servers with verified integrity</p>
+                    <a href="#download-options" class="btn-alt">
+                        <i class="fas fa-download me-2"></i>DOWNLOAD APK
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+/* Download Hero */
+.download-hero {
+    padding: 8rem 0 4rem;
+    background: linear-gradient(135deg, rgba(255, 0, 51, 0.15), rgba(10, 10, 10, 0.9));
+}
+
+.data-stream {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(0deg, transparent 90%, var(--border-red) 100%);
+    background-size: 100% 20px;
+    animation: streamFlow 1s linear infinite;
+    opacity: 0.1;
+}
+
+@keyframes streamFlow {
+    0% { background-position: 0 0; }
+    100% { background-position: 0 20px; }
+}
+
+.hero-icon {
+    width: 100px;
+    height: 100px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 0, 51, 0.1);
+    border: 2px solid var(--border-red);
+    border-radius: 50%;
+}
+
+.hero-icon i {
+    font-size: 3rem;
+    color: var(--primary-red);
+    animation: downloadPulse 2s ease-in-out infinite;
+}
+
+@keyframes downloadPulse {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+.hero-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(2.5rem, 6vw, 4rem);
+    font-weight: 900;
+    letter-spacing: 5px;
+}
+
+.hero-subtitle {
+    font-size: 1.2rem;
+    color: var(--gray-text);
+}
+
+/* Version Card */
+.version-card {
+    position: relative;
+    padding: 2.5rem;
+    background: rgba(255, 0, 51, 0.05);
+    border: 2px solid var(--border-red);
+    border-radius: 15px;
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
+
+.version-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 60px var(--glow-red);
+    border-color: var(--primary-red);
+}
+
+.card-corner {
+    position: absolute;
+    width: 25px;
+    height: 25px;
+    border: 3px solid var(--primary-red);
+}
+
+.card-corner.tl { top: -2px; left: -2px; border-right: none; border-bottom: none; }
+.card-corner.tr { top: -2px; right: -2px; border-left: none; border-bottom: none; }
+.card-corner.bl { bottom: -2px; left: -2px; border-right: none; border-top: none; }
+.card-corner.br { bottom: -2px; right: -2px; border-left: none; border-top: none; }
+
+.version-pulse {
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, var(--glow-red), transparent 50%);
+    animation: versionPulse 4s ease-in-out infinite;
+    opacity: 0.3;
+}
+
+@keyframes versionPulse {
+    0%, 100% { transform: scale(0.5); opacity: 0; }
+    50% { transform: scale(1); opacity: 0.3; }
+}
+
+.version-label {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.75rem;
+    letter-spacing: 3px;
+    color: var(--gray-text);
+    margin-bottom: 0.5rem;
+}
+
+.version-number {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 2.5rem;
+    font-weight: 900;
+    letter-spacing: 3px;
+    color: var(--primary-red);
+    margin-bottom: 1rem;
+}
+
+.version-notes {
+    font-size: 1rem;
+    color: var(--gray-text);
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+}
+
+.version-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+}
+
+.meta-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.meta-item i {
+    color: var(--primary-red);
+}
+
+/* Download Button */
+.btn-download {
+    position: relative;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1.5rem 2rem;
+    background: rgba(255, 0, 51, 0.1);
+    border: 2px solid var(--border-red);
+    border-radius: 10px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    overflow: hidden;
+    clip-path: polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px));
+}
+
+.btn-download:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px var(--glow-red);
+    border-color: var(--primary-red);
+}
+
+.btn-icon {
+    font-size: 2rem;
+    color: var(--primary-red);
+    margin-bottom: 0.5rem;
+}
+
+.btn-text {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+    color: var(--light-text);
+}
+
+.btn-shine {
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+.btn-download:hover .btn-shine {
+    left: 100%;
+}
+
+/* QR Section */
+.qr-frame {
+    width: 100px;
+    height: 100px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 0, 51, 0.05);
+    border: 2px solid var(--border-red);
+    border-radius: 10px;
+}
+
+.qr-frame i {
+    font-size: 2.5rem;
+    color: var(--primary-red);
+    margin-bottom: 0.5rem;
+}
+
+.qr-frame small {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.65rem;
+    letter-spacing: 1px;
+    color: var(--gray-text);
+}
+
+/* Coming Soon */
+.coming-soon-box {
+    text-align: center;
+    padding: 5rem 3rem;
+    background: rgba(255, 0, 51, 0.05);
+    border: 2px solid var(--border-red);
+    border-radius: 20px;
+}
+
+.soon-icon {
+    font-size: 5rem;
+    color: var(--primary-red);
+    margin-bottom: 2rem;
+    animation: rocketFloat 3s ease-in-out infinite;
+}
+
+@keyframes rocketFloat {
+    0%, 100% { transform: translateY(0) rotate(-10deg); }
+    50% { transform: translateY(-20px) rotate(10deg); }
+}
+
+.soon-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 2.5rem;
+    font-weight: 700;
+    letter-spacing: 3px;
+    margin-bottom: 1rem;
+}
+
+.soon-text {
+    font-size: 1.1rem;
+    color: var(--gray-text);
+    margin-bottom: 2rem;
+}
+
+.btn-notify {
+    display: inline-flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 2rem;
+    background: transparent;
+    border: 2px solid var(--primary-red);
+    color: var(--primary-red);
+    text-decoration: none;
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 600;
+    letter-spacing: 2px;
+    border-radius: 50px;
+    transition: all 0.3s ease;
+}
+
+.btn-notify:hover {
+    background: var(--primary-red);
+    color: var(--light-text);
+    transform: translateX(5px);
+}
+
+/* Installation Guide */
+.installation-guide {
+    position: relative;
+    background: rgba(10, 10, 10, 0.5);
+}
+
+.guide-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: linear-gradient(var(--border-red) 1px, transparent 1px);
+    background-size: 100% 50px;
+    opacity: 0.05;
+}
+
+.section-badge {
+    display: inline-block;
+    padding: 0.5rem 1.5rem;
+    background: rgba(255, 0, 51, 0.1);
+    border: 1px solid var(--border-red);
+    border-radius: 30px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.85rem;
+    letter-spacing: 2px;
+    margin-bottom: 1rem;
+}
+
+.section-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 700;
+    letter-spacing: 3px;
+    margin-bottom: 1rem;
+}
+
+.section-subtitle {
+    font-size: 1.1rem;
+    color: var(--gray-text);
+}
+
+/* Steps Container */
+.steps-container {
+    position: relative;
+}
+
+.step-item {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 3rem;
+    position: relative;
+}
+
+.step-number {
+    position: relative;
+    flex-shrink: 0;
+}
+
+.step-number span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 60px;
+    height: 60px;
+    background: rgba(255, 0, 51, 0.1);
+    border: 2px solid var(--border-red);
+    border-radius: 50%;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary-red);
+}
+
+.step-line {
+    position: absolute;
+    top: 60px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 2px;
+    height: 60px;
+    background: linear-gradient(to bottom, var(--border-red), transparent);
+}
+
+.step-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+    margin-bottom: 0.75rem;
+}
+
+.step-description {
+    font-size: 0.95rem;
+    color: var(--gray-text);
+    line-height: 1.6;
+}
+
+/* Requirements Box */
+.requirements-box {
+    padding: 2.5rem;
+    background: rgba(255, 0, 51, 0.05);
+    border: 2px solid var(--border-red);
+    border-radius: 15px;
+    height: 100%;
+}
+
+.req-heading {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    margin-bottom: 1.5rem;
+}
+
+.req-divider {
+    height: 2px;
+    background: linear-gradient(90deg, var(--primary-red), transparent);
+    margin-bottom: 2rem;
+}
+
+.req-item {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1.5rem;
+    background: rgba(255, 0, 51, 0.05);
+    border: 1px solid var(--border-red);
+    border-radius: 10px;
+    margin-bottom: 1rem;
+    transition: all 0.3s ease;
+}
+
+.req-item:hover {
+    transform: translateX(10px);
+    border-color: var(--primary-red);
+}
+
+.req-icon {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 0, 51, 0.1);
+    border: 2px solid var(--border-red);
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.req-icon i {
+    font-size: 1.5rem;
+    color: var(--primary-red);
+}
+
+.req-info {
+    flex-grow: 1;
+}
+
+.req-label {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+    color: var(--gray-text);
+    margin-bottom: 0.25rem;
+}
+
+.req-spec {
+    font-size: 1rem;
+    color: var(--light-text);
+    margin-bottom: 0;
+}
+
+.req-check {
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--primary-red);
+    border-radius: 50%;
+}
+
+.req-check i {
+    color: var(--light-text);
+    font-size: 0.9rem;
+}
+
+/* Alternative Cards */
+.alt-card {
+    text-align: center;
+    padding: 2.5rem 2rem;
+    background: rgba(255, 0, 51, 0.05);
+    border: 2px solid var(--border-red);
+    border-radius: 15px;
+    height: 100%;
+    transition: all 0.3s ease;
+    clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px));
+}
+
+.alt-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px var(--glow-red);
+}
+
+.alt-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 0, 51, 0.1);
+    border: 2px solid var(--border-red);
+    border-radius: 50%;
+}
+
+.alt-icon i {
+    font-size: 2.5rem;
+    color: var(--primary-red);
+}
+
+.alt-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+    margin-bottom: 1rem;
+}
+
+.alt-description {
+    font-size: 0.95rem;
+    color: var(--gray-text);
+    line-height: 1.6;
+    margin-bottom: 2rem;
+}
+
+.btn-alt {
+    display: inline-block;
+    padding: 0.75rem 2rem;
+    background: transparent;
+    border: 2px solid var(--primary-red);
+    color: var(--primary-red);
+    text-decoration: none;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+    border-radius: 50px;
+    transition: all 0.3s ease;
+}
+
+.btn-alt:hover {
+    background: var(--primary-red);
+    color: var(--light-text);
+}
+
+.btn-alt.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .version-card { padding: 1.5rem; }
+    .step-number span { width: 50px; height: 50px; }
+    .requirements-box { margin-top: 2rem; }
+}
+</style>
+
+<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+     var pageloader = document.getElementById('pageLoader');
+    window.addEventListener('load', function() {
+        pageloader.style.display = "none";
+    });
+    AOS.init({ duration: 800, once: true });
+</script>
+
+<!-- Footer -->
+    <footer class="py-5 mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <h5><i class="fas fa-shield-alt me-2"></i>AUTONIX</h5>
+                    <p style="color: white;">Intelligent Rider Safety Assistance and Monitoring System. Making road safety accessible to everyone.</p>
+                    <div class="social-links mt-3">
+                        <a href="https://github.com/yatin-anchan/Autonix/" class="text-white me-3"><i class="fab fa-github"></i></a>
+                        <a href="#" class="text-white me-3"><i class="fab fa-linkedin"></i></a>
+                        <a href="#" class="text-white me-3"><i class="fab fa-twitter"></i></a>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <h6>QUICK LINKS</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="home.html" class=" text-decoration-none" style="color: white;">Home</a></li>
+                        <li><a href="features.html" class="text-decoration-none" style="color: white;">Feature</a></li>
+                        <li><a href="support.html" class="text-decoration-none" style="color: white;">Support</a></li>
+                        <li><a href="#" class="text-decoration-none" style="color: white;">Privacy Policy</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <h6>CONTACT</h6>
+                    <p style="color: white;">
+                        <i class="fas fa-envelope me-2"></i>support@autonix.app<br>
+                        <i class="fas fa-university me-2"></i>Royal College of Arts, Science & Commerce
+                    </p>
+                </div>
+            </div>
+            <hr class="my-4" style="border-color: var(--border-red);">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <p class="mb-0 " style="color: white;">&copy; 2025 Autonix. Developed by Maizah Shaikh & Yatin Anchan.</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <span class="badge">AUTONIX - SAFETY FOR ALL</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+    
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', function() {
+            const nav = document.getElementById('mainNav');
+            if (window.scrollY > 50) {
+                nav.classList.add('scrolled');
+            } else {
+                nav.classList.remove('scrolled');
+            }
+        });
+
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>
