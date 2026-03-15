@@ -333,12 +333,34 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;color:var(--w);
     <div style="display:flex;flex-direction:column;align-items:center;gap:1.4rem">
       <div class="map-box">
         <div class="map-grid"></div>
-        <svg style="position:absolute;inset:0;width:100%;height:100%" viewBox="0 0 300 280">
-          <path d="M40 230 Q85 160 155 105 Q215 52 265 78" stroke="rgba(0,229,255,.4)" stroke-width="2" fill="none" stroke-dasharray="500" stroke-dashoffset="500"><animate attributeName="stroke-dashoffset" from="500" to="0" dur="2.5s" repeatCount="indefinite"/></path>
-          <circle cx="40" cy="230" r="5" fill="var(--r)"/><circle cx="265" cy="78" r="5" fill="var(--cyan)"/>
+        <!-- Road path: matches the car animation keyframes exactly -->
+        <svg style="position:absolute;inset:0;width:100%;height:100%;overflow:visible" viewBox="0 0 300 280" preserveAspectRatio="none">
+          <!-- Road outline (slightly wider, darker) -->
+          <path d="M30 202 Q96 123 180 73 Q229 45 228 152 Q228 200 228 152" stroke="rgba(0,229,255,.12)" stroke-width="8" fill="none" stroke-linecap="round"/>
+          <!-- Animated route line -->
+          <path id="mapRoute" d="M30 202 Q96 123 180 73 Q229 45 228 152" stroke="rgba(0,229,255,.55)" stroke-width="2" fill="none" stroke-linecap="round" stroke-dasharray="440" stroke-dashoffset="440">
+            <animate attributeName="stroke-dashoffset" from="440" to="0" dur="3s" repeatCount="indefinite"/>
+          </path>
+          <!-- Start dot -->
+          <circle cx="30" cy="202" r="5" fill="#ff0033">
+            <animate attributeName="r" values="4;6;4" dur="1.5s" repeatCount="indefinite"/>
+          </circle>
+          <!-- End dot -->
+          <circle cx="228" cy="152" r="5" fill="rgba(0,229,255,.9)">
+            <animate attributeName="r" values="4;6;4" dur="1.5s" begin=".5s" repeatCount="indefinite"/>
+          </circle>
+          <!-- Direction arrows along path -->
+          <text x="105" y="138" font-size="10" fill="rgba(0,229,255,.4)" transform="rotate(-35,105,138)">▶</text>
+          <text x="190" y="78" font-size="10" fill="rgba(0,229,255,.4)" transform="rotate(55,190,78)">▶</text>
         </svg>
-        <div class="map-ping"></div>
-        <div class="map-car-el">🚗</div>
+        <!-- Ping at destination -->
+        <div class="map-ping" style="top:54%;left:76%"></div>
+        <!-- Car follows: 10%,72% → 32%,44% → 60%,26% → 76%,54% = maps to SVG path -->
+        <div class="map-car-el" style="margin-top:-12px;margin-left:-10px">🚗</div>
+        <!-- Start label -->
+        <div style="position:absolute;left:2%;top:76%;font-family:'Orbitron',sans-serif;font-size:.5rem;color:rgba(255,0,51,.6);letter-spacing:1px">START</div>
+        <!-- End label -->
+        <div style="position:absolute;left:70%;top:50%;font-family:'Orbitron',sans-serif;font-size:.5rem;color:rgba(0,229,255,.6);letter-spacing:1px">DEST</div>
       </div>
     </div>
   </div>
@@ -488,9 +510,10 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;color:var(--w);
     update(){this.x+=this.vx;this.y+=this.vy;this.vy+=.04;this.vx*=.99;this.life--}
     draw(ctx){
       const a=this.life/this.maxLife;
+      const rad=Math.max(0.01, this.r*a); // guard: radius must be > 0
       ctx.save();ctx.shadowBlur=8;ctx.shadowColor=`rgba(255,0,51,${a})`;
       ctx.fillStyle=`rgba(255,0,51,${a})`;
-      ctx.beginPath();ctx.arc(this.x,this.y,this.r*a,0,Math.PI*2);ctx.fill();ctx.restore();
+      ctx.beginPath();ctx.arc(this.x,this.y,rad,0,Math.PI*2);ctx.fill();ctx.restore();
     }
     get alive(){return this.life>0}
   }
@@ -948,6 +971,7 @@ window.addEventListener('wheel',e=>{
 
 // Keyboard
 window.addEventListener('keydown',e=>{
+  tryFullscreen();
   switch(e.key){
     case 'Escape':
       e.preventDefault();
@@ -975,6 +999,7 @@ window.addEventListener('keydown',e=>{
 
 // Click advance (skip intro on click too)
 document.getElementById('stage').addEventListener('click',e=>{
+  tryFullscreen();
   if(e.target.closest('.dot')||e.target.closest('.cam-frame'))return;
   if(!presenting){beginPresentation();return}
   goTo(current+1);
@@ -991,9 +1016,18 @@ document.addEventListener('touchend',e=>{
 
 // Init
 window.addEventListener('load',()=>{
-  try{document.documentElement.requestFullscreen();}catch(e){}
   updUI(0);
+  // Fullscreen is triggered on first user interaction (gesture required by browsers)
 });
+
+// Request fullscreen on first gesture
+let fsRequested=false;
+function tryFullscreen(){
+  if(fsRequested)return; fsRequested=true;
+  if(document.documentElement.requestFullscreen){
+    document.documentElement.requestFullscreen().catch(()=>{});
+  }
+}
 </script>
 </body>
 </html>
