@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AUTONIX — Project Exhibition</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+  :root {
+    --red: #ff0033;
+    --red2: #cc0028;
+    --bg: #050505;
+    --bg2: #0a0a0a;
+    --glow: rgba(255,0,51,0.55);
+    --glow2: rgba(255,0,51,0.25);
+    --border: rgba(255,0,51,0.3);
+    --white: #ffffff;
+    --gray: #aaaaaa;
+    --dim: #555;
+  }
+
+  html, body {
+    width: 100%; height: 100%;
+    overflow: hidden;
+    background: var(--bg);
+    color: var(--white);
+    font-family: 'Rajdhani', sans-serif;
+    cursor: none;
+  }
+
+  /* ── GLOBAL BG ── */
+  #bg-grid {
+    position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background:
+      linear-gradient(90deg, transparent 49%, var(--border) 50%, transparent 51%) 0 0 / 44px 44px,
+      linear-gradient(0deg,  transparent 49%, var(--border) 50%, transparent 51%) 0 0 / 44px 44px;
+    opacity: .08;
+    animation: gridDrift 25s linear infinite;
+  }
+  @keyframes gridDrift { to { transform: translate(44px, 44px); } }
+
+  /* scanline */
+  #scanline {
+    position: fixed; top:0; left:0; width:100%; height:3px; z-index:9998; pointer-events:none;
+    background: linear-gradient(90deg, transparent, var(--red), transparent);
+    box-shadow: 0 0 18px var(--glow);
+    animation: scan 3.5s linear infinite;
+  }
+  @keyframes scan {
+    0%  { transform:translateY(0);   opacity:0; }
+    10% { opacity:1; }
+    90% { opacity:1; }
+    100%{ transform:translateY(100vh); opacity:0; }
+  }
+
+  /* corner deco */
+  .corner { position:fixed; width:60px; height:60px; z-index:9999; pointer-events:none; }
+  .corner::before, .corner::after { content:''; position:absolute; background:var(--red); }
+  .corner::before { width:100%; height:2px; }
+  .corner::after  { width:2px; height:100%; }
+  .corner.tl { top:0; left:0; }
+  .corner.tr { top:0; right:0; transform:scaleX(-1); }
+  .corner.bl { bottom:0; left:0; transform:scaleY(-1); }
+  .corner.br { bottom:0; right:0; transform:scale(-1); }
+
+  /* progress bar */
+  #progress-bar {
+    position: fixed; bottom:0; left:0; height:3px; z-index:9999;
+    background: linear-gradient(90deg, var(--red2), var(--red), #ff6688);
+    box-shadow: 0 0 12px var(--glow);
+    width: 0%;
+    transition: width linear;
+  }
+
+  /* slide counter */
+  #slide-counter {
+    position: fixed; bottom: 18px; right: 28px; z-index:9999;
+    font-family:'Orbitron',sans-serif; font-size:.75rem; letter-spacing:2px;
+    color: var(--border); opacity:.7;
+  }
+
+  /* ── SLIDES ── */
+  #stage {
+    position: fixed; inset: 0; z-index: 10;
+  }
+
+  .slide {
+    position: absolute; inset:0;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; pointer-events:none;
+    transition: opacity .05s;
+  }
+  .slide.active { opacity:1; pointer-events:auto; }
+
+  /* ══════════════════════════════════
+     SLIDE 1 — LOGO REVEAL
+  ══════════════════════════════════ */
+  .s1-wrap {
+    display: flex; flex-direction:column; align-items:center; justify-content:center;
+    gap: 2rem; text-align:center; position:relative;
+  }
+  .s1-ring {
+    position:relative; width:220px; height:220px;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .s1-ring::before {
+    content:''; position:absolute; inset:0;
+    border:2px solid var(--border);
+    border-radius:50%;
+    animation: ringPulse 2s ease-in-out infinite;
+  }
+  .s1-ring::after {
+    content:''; position:absolute; inset:-18px;
+    border:1px solid rgba(255,0,51,.15);
+    border-radius:50%;
+    animation: ringPulse 2s ease-in-out infinite .5s;
+  }
+  @keyframes ringPulse {
+    0%,100%{ transform:scale(1); opacity:.4; }
+    50%    { transform:scale(1.06); opacity:.9; }
+  }
+  .s1-icon {
+    font-size:5rem; color:var(--red);
+    filter: drop-shadow(0 0 20px var(--glow));
+    animation: iconBeat 2s ease-in-out infinite;
+  }
+  @keyframes iconBeat {
+    0%,100%{ transform:scale(1);    filter:drop-shadow(0 0 20px var(--glow)); }
+    50%    { transform:scale(1.12); filter:drop-shadow(0 0 40px var(--red)); }
+  }
+  .s1-title {
+    font-family:'Orbitron',sans-serif; font-size:clamp(3.5rem,8vw,7rem); font-weight:900;
+    letter-spacing:10px;
+    background: linear-gradient(135deg,#ff0033,#ff3366,#ff0033);
+    background-size:200%; -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+    animation: gradShift 3s ease infinite;
+  }
+  @keyframes gradShift {
+    0%,100%{ background-position:0% center; }
+    50%    { background-position:100% center; }
+  }
+  .s1-sub {
+    font-family:'Orbitron',sans-serif; font-size:clamp(.8rem,2vw,1.1rem);
+    letter-spacing:6px; color:var(--gray); text-transform:uppercase;
+    opacity:0; animation: fadeSlideUp .8s ease .6s forwards;
+  }
+  .s1-tagline {
+    font-size:clamp(1rem,2.5vw,1.4rem); color:var(--gray); letter-spacing:2px;
+    opacity:0; animation: fadeSlideUp .8s ease 1s forwards;
+  }
+  .s1-tagline span { color:var(--red); font-weight:700; }
+  @keyframes fadeSlideUp {
+    from{ opacity:0; transform:translateY(20px); }
+    to  { opacity:1; transform:translateY(0); }
+  }
+
+  /* typing cursor effect for slide 1 */
+  .s1-type { border-right:3px solid var(--red); animation:blink .8s step-end infinite; }
+  @keyframes blink { 50%{ border-color:transparent; } }
+
+  /* orbit dots */
+  .orbit {
+    position:absolute; inset:-50px;
+    animation: orbitSpin 8s linear infinite;
+    border-radius:50%;
+  }
+  .orbit-dot {
+    position:absolute; width:8px; height:8px;
+    background:var(--red); border-radius:50%;
+    box-shadow:0 0 12px var(--glow);
+    top:50%; left:0; transform:translateY(-50%);
+  }
+  @keyframes orbitSpin { to{ transform:rotate(360deg); } }
+  .orbit2 { animation-duration:12s; animation-direction:reverse; inset:-80px; }
+  .orbit2 .orbit-dot { background:#fff; box-shadow:0 0 8px rgba(255,255,255,.5); }
+
+  /* ══════════════════════════════════
+     SLIDE 2 — PROBLEM STATEMENT
+  ══════════════════════════════════ */
+  .s2-wrap {
+    max-width:1200px; width:100%; padding:3rem;
+    display:grid; grid-template-columns:1fr 1fr; gap:4rem; align-items:center;
+  }
+  .slide-badge {
+    display:inline-block; padding:.4rem 1.2rem;
+    background:rgba(255,0,51,.1); border:1px solid var(--border);
+    border-radius:30px; font-family:'Orbitron',sans-serif;
+    font-size:.75rem; letter-spacing:2px; color:var(--red);
+    margin-bottom:1.5rem;
+  }
+  .slide-title {
+    font-family:'Orbitron',sans-serif;
+    font-size:clamp(1.8rem,4vw,3rem); font-weight:700; letter-spacing:3px;
+    line-height:1.2; margin-bottom:1.5rem;
+  }
+  .slide-title .hl { color:var(--red); }
+  .slide-body { font-size:clamp(.95rem,1.8vw,1.15rem); color:var(--gray); line-height:1.9; }
+
+  .stat-grid { display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; }
+  .stat-box {
+    padding:1.8rem 1.5rem; text-align:center;
+    background:rgba(255,0,51,.05); border:1px solid var(--border);
+    border-radius:12px; position:relative; overflow:hidden;
+    clip-path:polygon(0 0,calc(100% - 15px) 0,100% 15px,100% 100%,15px 100%,0 calc(100% - 15px));
+    transition:all .3s;
+  }
+  .stat-box::after {
+    content:''; position:absolute; bottom:0; left:0; width:100%; height:2px;
+    background:var(--red); transform:scaleX(0); transform-origin:left;
+    animation:statAnim 2s ease-in-out infinite;
+  }
+  @keyframes statAnim { 0%,100%{ transform:scaleX(0); } 50%{ transform:scaleX(1); } }
+  .stat-num {
+    font-family:'Orbitron',sans-serif; font-size:2.5rem; font-weight:700;
+    color:var(--red); display:block; margin-bottom:.4rem;
+  }
+  .stat-lbl { font-size:.85rem; color:var(--gray); letter-spacing:1px; text-transform:uppercase; }
+
+  /* ══════════════════════════════════
+     SLIDE 3 — SOLUTION / WHAT IS AUTONIX
+  ══════════════════════════════════ */
+  .s3-wrap {
+    max-width:1200px; width:100%; padding:3rem; text-align:center;
+  }
+  .feature-pills {
+    display:flex; flex-wrap:wrap; gap:1.2rem; justify-content:center; margin-top:3rem;
+  }
+  .pill {
+    display:flex; align-items:center; gap:.8rem;
+    padding:1rem 2rem;
+    background:rgba(255,0,51,.07); border:1px solid var(--border);
+    border-radius:50px; font-family:'Orbitron',sans-serif; font-size:.85rem; letter-spacing:1px;
+    transition:all .3s;
+    animation:pillFloat 3s ease-in-out infinite;
+  }
+  .pill:nth-child(2){ animation-delay:.4s; }
+  .pill:nth-child(3){ animation-delay:.8s; }
+  .pill:nth-child(4){ animation-delay:1.2s; }
+  .pill:nth-child(5){ animation-delay:1.6s; }
+  @keyframes pillFloat {
+    0%,100%{ transform:translateY(0); }
+    50%    { transform:translateY(-8px); }
+  }
+  .pill i { color:var(--red); font-size:1.2rem; }
+
+  /* ══════════════════════════════════
+     SLIDE 4 — DROWSINESS DETECTION
+  ══════════════════════════════════ */
+  .s4-wrap {
+    max-width:1300px; width:100%; padding:3rem;
+    display:grid; grid-template-columns:1.2fr 1fr; gap:5rem; align-items:center;
+  }
+  .tech-list { list-style:none; margin-top:1.5rem; display:flex; flex-direction:column; gap:.9rem; }
+  .tech-list li {
+    display:flex; align-items:flex-start; gap:1rem;
+    padding:1rem 1.2rem;
+    background:rgba(255,0,51,.05); border-left:3px solid var(--red);
+    border-radius:0 8px 8px 0; font-size:1rem; color:var(--gray);
+    transition:all .3s;
+  }
+  .tech-list li i { color:var(--red); margin-top:3px; flex-shrink:0; }
+  .tech-list li strong { color:var(--white); }
+
+  /* EAR diagram */
+  .ear-diagram {
+    position:relative; display:flex; flex-direction:column;
+    align-items:center; justify-content:center; gap:1.5rem;
+  }
+  .eye-svg-wrap {
+    width:280px; height:140px;
+    background:rgba(255,0,51,.05); border:1px solid var(--border);
+    border-radius:15px; display:flex; align-items:center; justify-content:center;
+    position:relative; overflow:hidden;
+  }
+  .eye-svg-wrap::before {
+    content:''; position:absolute; top:0; left:0; width:100%; height:3px;
+    background:linear-gradient(90deg,transparent,var(--red),transparent);
+    animation:scanLine2 2s linear infinite;
+  }
+  @keyframes scanLine2 { from{transform:translateY(0)} to{transform:translateY(140px)} }
+
+  .ear-meter {
+    width:280px; background:rgba(255,0,51,.08); border:1px solid var(--border); border-radius:8px;
+    padding:1rem 1.5rem;
+  }
+  .ear-label {
+    font-family:'Orbitron',sans-serif; font-size:.8rem; letter-spacing:2px;
+    color:var(--red); margin-bottom:.7rem;
+  }
+  .ear-bar-track { height:10px; background:rgba(255,0,51,.15); border-radius:5px; overflow:hidden; }
+  .ear-bar-fill {
+    height:100%; width:72%; background:linear-gradient(90deg,var(--red2),var(--red));
+    border-radius:5px; animation:earAnim 3s ease-in-out infinite;
+    box-shadow:0 0 10px var(--glow);
+  }
+  @keyframes earAnim {
+    0%  { width:72%; }
+    30% { width:72%; }
+    45% { width:18%; } /* drowsy dip */
+    55% { width:18%; }
+    70% { width:72%; }
+    100%{ width:72%; }
+  }
+  .ear-status {
+    font-family:'Orbitron',sans-serif; font-size:.75rem; letter-spacing:2px;
+    margin-top:.5rem; text-align:right; color:var(--green, #22c55e);
+    animation:statusSwitch 3s ease-in-out infinite;
+  }
+  @keyframes statusSwitch {
+    0%,30%,70%,100% { color:#22c55e; content:'ALERT'; }
+    45%,55%         { color:var(--red); }
+  }
+
+  /* ══════════════════════════════════
+     SLIDE 5 — CRASH DETECTION
+  ══════════════════════════════════ */
+  .s5-wrap {
+    max-width:1300px; width:100%; padding:3rem;
+    display:grid; grid-template-columns:1fr 1.2fr; gap:5rem; align-items:center;
+  }
+  /* impact animation */
+  .crash-visual {
+    display:flex; flex-direction:column; align-items:center; gap:2rem;
+  }
+  .impact-ring {
+    position:relative; width:200px; height:200px;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .impact-ring::before, .impact-ring::after {
+    content:''; position:absolute; inset:0;
+    border-radius:50%; border:2px solid var(--red);
+    animation:impactWave 2s ease-out infinite;
+  }
+  .impact-ring::after { animation-delay:.7s; }
+  @keyframes impactWave {
+    0%  { transform:scale(.5); opacity:.9; }
+    100%{ transform:scale(1.6); opacity:0; }
+  }
+  .impact-icon { font-size:4.5rem; color:var(--red); z-index:2;
+    filter:drop-shadow(0 0 20px var(--glow));
+    animation:impactShake .5s ease-in-out infinite;
+  }
+  @keyframes impactShake {
+    0%,100%{ transform:translate(0,0) rotate(0deg); }
+    20%    { transform:translate(-3px,2px) rotate(-2deg); }
+    40%    { transform:translate(3px,-2px) rotate(2deg); }
+    60%    { transform:translate(-2px,3px) rotate(-1deg); }
+    80%    { transform:translate(2px,-3px) rotate(1deg); }
+  }
+  .countdown-demo {
+    width:280px; padding:1.5rem;
+    background:rgba(255,0,51,.08); border:2px solid var(--red);
+    border-radius:12px; text-align:center;
+    clip-path:polygon(0 0,calc(100% - 12px) 0,100% 12px,100% 100%,12px 100%,0 calc(100% - 12px));
+  }
+  .countdown-label {
+    font-family:'Orbitron',sans-serif; font-size:.75rem; letter-spacing:2px; color:var(--red); margin-bottom:.5rem;
+  }
+  .countdown-num {
+    font-family:'Orbitron',sans-serif; font-size:3.5rem; font-weight:700; color:var(--white);
+    animation:countDown 30s linear infinite;
+  }
+  @keyframes countDown {
+    0%  { opacity:1; } /* just pulse, no actual countdown — decorative */
+    50% { opacity:.5; }
+    100%{ opacity:1; }
+  }
+
+  /* ══════════════════════════════════
+     SLIDE 6 — TECH STACK
+  ══════════════════════════════════ */
+  .s6-wrap {
+    max-width:1100px; width:100%; padding:3rem; text-align:center;
+  }
+  .tech-hex-grid {
+    display:flex; flex-wrap:wrap; justify-content:center; gap:2rem; margin-top:3rem;
+  }
+  .hex-item {
+    width:160px; display:flex; flex-direction:column; align-items:center; gap:.8rem;
+    padding:2rem 1.2rem;
+    background:rgba(255,0,51,.06); border:1px solid var(--border); border-radius:16px;
+    clip-path:polygon(20% 0%,80% 0%,100% 20%,100% 80%,80% 100%,20% 100%,0% 80%,0% 20%);
+    transition:all .3s;
+    animation:hexFloat 4s ease-in-out infinite;
+  }
+  .hex-item:nth-child(2){ animation-delay:.5s; }
+  .hex-item:nth-child(3){ animation-delay:1s; }
+  .hex-item:nth-child(4){ animation-delay:1.5s; }
+  .hex-item:nth-child(5){ animation-delay:2s; }
+  @keyframes hexFloat {
+    0%,100%{ transform:translateY(0); }
+    50%    { transform:translateY(-12px); box-shadow:0 15px 40px var(--glow2); }
+  }
+  .hex-icon { font-size:2.5rem; color:var(--red); }
+  .hex-name { font-family:'Orbitron',sans-serif; font-size:.8rem; letter-spacing:1px; text-align:center; }
+
+  /* ══════════════════════════════════
+     SLIDE 7 — TEAM / CREDITS
+  ══════════════════════════════════ */
+  .s7-wrap {
+    max-width:1100px; width:100%; padding:3rem; text-align:center;
+  }
+  .team-cards {
+    display:flex; gap:3rem; justify-content:center; margin-top:3rem; flex-wrap:wrap;
+  }
+  .team-card {
+    width:260px; padding:2.5rem 2rem; text-align:center;
+    background:rgba(255,0,51,.07); border:1px solid var(--border); border-radius:20px;
+    position:relative; overflow:hidden;
+    clip-path:polygon(0 0,calc(100% - 20px) 0,100% 20px,100% 100%,20px 100%,0 calc(100% - 20px));
+  }
+  .team-card::before {
+    content:''; position:absolute; bottom:0; left:0; width:100%; height:3px;
+    background:linear-gradient(90deg,transparent,var(--red),transparent);
+    animation:borderGlow 2.5s ease-in-out infinite;
+  }
+  @keyframes borderGlow { 0%,100%{opacity:.3;} 50%{opacity:1;} }
+  .team-avatar {
+    width:80px; height:80px; border-radius:50%; background:rgba(255,0,51,.15);
+    border:2px solid var(--border); display:flex; align-items:center; justify-content:center;
+    margin:0 auto 1.2rem; font-size:2rem; color:var(--red);
+  }
+  .team-name { font-family:'Orbitron',sans-serif; font-size:1rem; letter-spacing:2px; margin-bottom:.4rem; }
+  .team-role { font-size:.9rem; color:var(--gray); }
+  .team-inst { font-size:.8rem; color:var(--dim); margin-top:.4rem; }
+
+  /* college badge */
+  .college-badge {
+    margin-top:2.5rem; padding:1rem 2.5rem; display:inline-block;
+    background:rgba(255,0,51,.08); border:1px solid var(--border); border-radius:50px;
+    font-family:'Orbitron',sans-serif; font-size:.8rem; letter-spacing:2px; color:var(--gray);
+  }
+
+  /* ══════════════════════════════════
+     SLIDE TRANSITIONS
+  ══════════════════════════════════ */
+  .slide { animation: none; }
+
+  /* IN animations */
+  .anim-in .s1-wrap,
+  .anim-in .s2-wrap,
+  .anim-in .s3-wrap,
+  .anim-in .s4-wrap,
+  .anim-in .s5-wrap,
+  .anim-in .s6-wrap,
+  .anim-in .s7-wrap {
+    animation: slideIn .7s cubic-bezier(.23,1,.32,1) both;
+  }
+  @keyframes slideIn {
+    from{ opacity:0; transform:translateY(40px); }
+    to  { opacity:1; transform:translateY(0); }
+  }
+
+  /* glitch flash on transition */
+  .glitch-flash {
+    position:fixed; inset:0; z-index:9997; pointer-events:none;
+    background:var(--red); opacity:0;
+    animation: glitchFlash .35s ease forwards;
+  }
+  @keyframes glitchFlash {
+    0%  { opacity:.15; }
+    20% { opacity:0; }
+    40% { opacity:.08; }
+    60% { opacity:0; }
+    100%{ opacity:0; }
+  }
+
+  /* nav dots */
+  #nav-dots {
+    position:fixed; right:24px; top:50%; transform:translateY(-50%); z-index:9999;
+    display:flex; flex-direction:column; gap:10px;
+  }
+  .dot {
+    width:8px; height:8px; border-radius:50%;
+    background:var(--dim); border:1px solid var(--border);
+    transition:all .3s; cursor:pointer;
+  }
+  .dot.active {
+    background:var(--red); box-shadow:0 0 10px var(--glow); transform:scale(1.4);
+  }
+
+  /* custom cursor */
+  #cursor {
+    position:fixed; width:16px; height:16px; border-radius:50%;
+    border:2px solid var(--red); pointer-events:none; z-index:99999;
+    transform:translate(-50%,-50%); transition:transform .1s;
+    box-shadow:0 0 10px var(--glow);
+  }
+
+  /* SVG eye */
+  .eye-svg { filter: drop-shadow(0 0 8px var(--glow)); }
+
+  /* responsive quick fixes */
+  @media (max-width:900px){
+    .s2-wrap, .s4-wrap, .s5-wrap { grid-template-columns:1fr; gap:2rem; }
+    .stat-grid { grid-template-columns:1fr 1fr; }
+    .s1-title { font-size:3.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Global BG -->
+<div id="bg-grid"></div>
+<div id="scanline"></div>
+<div class="corner tl"></div>
+<div class="corner tr"></div>
+<div class="corner bl"></div>
+<div class="corner br"></div>
+<div id="progress-bar"></div>
+<div id="slide-counter">01 / 07</div>
+<div id="nav-dots"></div>
+<div id="cursor"></div>
+
+<!-- ══ STAGE ══ -->
+<div id="stage">
+
+  <!-- SLIDE 1 — LOGO REVEAL -->
+  <div class="slide active" id="s1">
+    <div class="s1-wrap anim-in">
+      <div class="s1-ring">
+        <div class="orbit"><div class="orbit-dot"></div></div>
+        <div class="orbit orbit2"><div class="orbit-dot"></div></div>
+        <i class="fas fa-shield-alt s1-icon"></i>
+      </div>
+      <h1 class="s1-title">AUTONIX</h1>
+      <p class="s1-sub">INTELLIGENT RIDER SAFETY ASSISTANCE &amp; MONITORING</p>
+      <p class="s1-tagline">
+        <span>Safety for all</span> — Accessible to all
+      </p>
+    </div>
+  </div>
+
+  <!-- SLIDE 2 — THE PROBLEM -->
+  <div class="slide" id="s2">
+    <div class="s2-wrap">
+      <div>
+        <div class="slide-badge"><i class="fas fa-exclamation-triangle me-2"></i>THE PROBLEM</div>
+        <h2 class="slide-title">Road Safety<br>Remains a<br><span class="hl">Crisis</span></h2>
+        <p class="slide-body">
+          Driver fatigue and delayed emergency response are among the leading causes of fatal accidents worldwide.
+          Advanced Driver Assistance Systems (ADAS) exist — but are locked behind expensive luxury vehicles,
+          leaving millions of everyday riders unprotected.
+        </p>
+      </div>
+      <div class="stat-grid">
+        <div class="stat-box">
+          <span class="stat-num">1.35M</span>
+          <span class="stat-lbl">Road deaths per year globally</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-num">37%</span>
+          <span class="stat-lbl">Of crashes linked to fatigue</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-num">6 min</span>
+          <span class="stat-lbl">Avg. emergency response delay</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-num">95%</span>
+          <span class="stat-lbl">Vehicles lack built-in ADAS</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 3 — THE SOLUTION -->
+  <div class="slide" id="s3">
+    <div class="s3-wrap">
+      <div class="slide-badge"><i class="fas fa-lightbulb me-2"></i>THE SOLUTION</div>
+      <h2 class="slide-title">One App. <span class="hl">Complete Protection.</span></h2>
+      <p class="slide-body" style="max-width:700px;margin:0 auto 1rem;">
+        Autonix transforms any Android smartphone into a full-featured driver safety co-pilot —
+        no expensive hardware, no subscriptions, no vehicle modifications needed.
+      </p>
+      <div class="feature-pills">
+        <div class="pill"><i class="fas fa-eye"></i> Drowsiness Detection</div>
+        <div class="pill"><i class="fas fa-car-crash"></i> Crash Detection</div>
+        <div class="pill"><i class="fas fa-map-marked-alt"></i> Smart Navigation</div>
+        <div class="pill"><i class="fas fa-bell"></i> Emergency Alerts</div>
+        <div class="pill"><i class="fas fa-mobile-alt"></i> Smartphone Only</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 4 — DROWSINESS DETECTION -->
+  <div class="slide" id="s4">
+    <div class="s4-wrap">
+      <div>
+        <div class="slide-badge"><i class="fas fa-eye me-2"></i>FEATURE 01</div>
+        <h2 class="slide-title">Drowsiness<br><span class="hl">Detection</span><br>System</h2>
+        <p class="slide-body">
+          Real-time facial landmark analysis detects driver fatigue before it becomes dangerous,
+          triggering escalating alerts to keep drivers alert.
+        </p>
+        <ul class="tech-list">
+          <li><i class="fas fa-angle-right"></i><div><strong>MediaPipe FaceMesh</strong> — 468 facial landmarks tracked per frame</div></li>
+          <li><i class="fas fa-angle-right"></i><div><strong>EAR Algorithm</strong> — Eye Aspect Ratio calculated in real-time</div></li>
+          <li><i class="fas fa-angle-right"></i><div><strong>30+ FPS</strong> — Smooth processing on mid-range Android devices</div></li>
+          <li><i class="fas fa-angle-right"></i><div><strong>Adaptive Thresholds</strong> — Calibrates to each driver individually</div></li>
+        </ul>
+      </div>
+      <div class="ear-diagram">
+        <!-- SVG Eye -->
+        <div class="eye-svg-wrap">
+          <svg class="eye-svg" viewBox="0 0 200 80" width="200" height="80" xmlns="http://www.w3.org/2000/svg">
+            <!-- eye outline -->
+            <ellipse cx="100" cy="40" rx="90" ry="32" fill="none" stroke="rgba(255,0,51,.4)" stroke-width="1.5"/>
+            <!-- iris -->
+            <circle cx="100" cy="40" r="22" fill="none" stroke="rgba(255,0,51,.6)" stroke-width="2"/>
+            <!-- pupil -->
+            <circle cx="100" cy="40" r="10" fill="rgba(255,0,51,.3)"/>
+            <!-- landmark dots -->
+            <circle cx="46" cy="40" r="3" fill="#ff0033"/>
+            <circle cx="154" cy="40" r="3" fill="#ff0033"/>
+            <circle cx="100" cy="14" r="3" fill="#ff0033"/>
+            <circle cx="100" cy="66" r="3" fill="#ff0033"/>
+            <circle cx="73"  cy="22" r="3" fill="#ff0033"/>
+            <circle cx="127" cy="22" r="3" fill="#ff0033"/>
+            <circle cx="73"  cy="58" r="3" fill="#ff0033"/>
+            <circle cx="127" cy="58" r="3" fill="#ff0033"/>
+            <!-- EAR lines -->
+            <line x1="100" y1="14" x2="100" y2="66" stroke="rgba(255,0,51,.5)" stroke-width="1" stroke-dasharray="3,3"/>
+            <line x1="46"  y1="40" x2="154" y2="40" stroke="rgba(255,0,51,.5)" stroke-width="1" stroke-dasharray="3,3"/>
+          </svg>
+        </div>
+        <div class="ear-meter">
+          <div class="ear-label">EYE ASPECT RATIO (EAR)</div>
+          <div class="ear-bar-track"><div class="ear-bar-fill"></div></div>
+          <div class="ear-status" id="earStatus">● ALERT</div>
+        </div>
+        <div style="font-family:'Orbitron',sans-serif;font-size:.7rem;letter-spacing:2px;color:var(--dim);text-align:center;">
+          EAR &lt; 0.25 → DROWSY ALERT TRIGGERED
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 5 — CRASH DETECTION -->
+  <div class="slide" id="s5">
+    <div class="s5-wrap">
+      <div class="crash-visual">
+        <div class="impact-ring">
+          <i class="fas fa-car-crash impact-icon"></i>
+        </div>
+        <div class="countdown-demo">
+          <div class="countdown-label">EMERGENCY COUNTDOWN</div>
+          <div class="countdown-num" id="cdNum">30</div>
+          <div style="font-family:'Orbitron',sans-serif;font-size:.7rem;letter-spacing:2px;color:var(--gray);">
+            SECONDS UNTIL ALERT SENT
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="slide-badge"><i class="fas fa-car-crash me-2"></i>FEATURE 02</div>
+        <h2 class="slide-title">Crash Detection<br>&amp; <span class="hl">Emergency</span><br>Response</h2>
+        <p class="slide-body">
+          Sensor fusion technology detects sudden impacts and automatically initiates a 30-second countdown,
+          alerting emergency contacts with live GPS coordinates if no user cancellation occurs.
+        </p>
+        <ul class="tech-list">
+          <li><i class="fas fa-angle-right"></i><div><strong>Accelerometer + Gyroscope</strong> — Multi-axis impact detection</div></li>
+          <li><i class="fas fa-angle-right"></i><div><strong>GPS Coordinates</strong> — Exact location sent to contacts</div></li>
+          <li><i class="fas fa-angle-right"></i><div><strong>30-Second Cancel Window</strong> — Avoids false positives</div></li>
+          <li><i class="fas fa-angle-right"></i><div><strong>Automated SMS + SOS</strong> — Flashlight &amp; audio distress signal</div></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 6 — TECH STACK -->
+  <div class="slide" id="s6">
+    <div class="s6-wrap">
+      <div class="slide-badge"><i class="fas fa-code me-2"></i>TECHNOLOGY</div>
+      <h2 class="slide-title">Built With <span class="hl">Cutting-Edge</span> Tools</h2>
+      <p class="slide-body" style="max-width:600px;margin:0 auto;">
+        Autonix is engineered on a modern Android-native stack, combining machine learning, sensor fusion, and cloud services into a single seamless experience.
+      </p>
+      <div class="tech-hex-grid">
+        <div class="hex-item">
+          <div class="hex-icon"><i class="fab fa-android"></i></div>
+          <div class="hex-name">ANDROID NATIVE</div>
+        </div>
+        <div class="hex-item">
+          <div class="hex-icon"><i class="fas fa-code"></i></div>
+          <div class="hex-name">KOTLIN / JAVA</div>
+        </div>
+        <div class="hex-item">
+          <div class="hex-icon"><i class="fas fa-brain"></i></div>
+          <div class="hex-name">MEDIAPIPE ML</div>
+        </div>
+        <div class="hex-item">
+          <div class="hex-icon"><i class="fas fa-database"></i></div>
+          <div class="hex-name">FIREBASE</div>
+        </div>
+        <div class="hex-item">
+          <div class="hex-icon"><i class="fas fa-map"></i></div>
+          <div class="hex-name">OSMDROID GPS</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 7 — TEAM -->
+  <div class="slide" id="s7">
+    <div class="s7-wrap">
+      <div class="slide-badge"><i class="fas fa-users me-2"></i>THE TEAM</div>
+      <h2 class="slide-title">Meet the <span class="hl">Developers</span></h2>
+      <div class="team-cards">
+        <div class="team-card">
+          <div class="team-avatar"><i class="fas fa-user"></i></div>
+          <div class="team-name">MAIZAH SHAIKH</div>
+          <div class="team-role">Lead Developer &amp; Research</div>
+          <div class="team-inst">Royal College of Arts, Science &amp; Commerce</div>
+        </div>
+        <div class="team-card">
+          <div class="team-avatar"><i class="fas fa-user"></i></div>
+          <div class="team-name">YATIN ANCHAN</div>
+          <div class="team-role">Lead Developer &amp; Architecture</div>
+          <div class="team-inst">Royal College of Arts, Science &amp; Commerce</div>
+        </div>
+      </div>
+      <div class="college-badge">
+        <i class="fas fa-university me-2"></i>
+        ROYAL COLLEGE OF ARTS, SCIENCE &amp; COMMERCE — 2025
+      </div>
+    </div>
+  </div>
+
+</div><!-- /stage -->
+
+<script>
+  // ── CURSOR ──
+  const cursor = document.getElementById('cursor');
+  document.addEventListener('mousemove', e => {
+    cursor.style.left = e.clientX + 'px';
+    cursor.style.top  = e.clientY + 'px';
+  });
+
+  // ── SLIDES ──
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  const TOTAL  = slides.length;
+  let current  = 0;
+  let timer    = null;
+  const DURATIONS = [5000, 7000, 6000, 8000, 8000, 7000, 7000]; // ms per slide
+
+  // build dots
+  const dotsEl = document.getElementById('nav-dots');
+  slides.forEach((_,i)=>{
+    const d = document.createElement('div');
+    d.className = 'dot' + (i===0?' active':'');
+    d.addEventListener('click', ()=> goTo(i));
+    dotsEl.appendChild(d);
+  });
+
+  function updateDots(idx){
+    dotsEl.querySelectorAll('.dot').forEach((d,i)=>{
+      d.className = 'dot' + (i===idx?' active':'');
+    });
+  }
+
+  function updateCounter(idx){
+    const n = String(idx+1).padStart(2,'0');
+    const t = String(TOTAL).padStart(2,'0');
+    document.getElementById('slide-counter').textContent = n + ' / ' + t;
+  }
+
+  function startProgress(dur){
+    const bar = document.getElementById('progress-bar');
+    bar.style.transition = 'none';
+    bar.style.width = '0%';
+    // force reflow
+    bar.getBoundingClientRect();
+    bar.style.transition = `width ${dur}ms linear`;
+    bar.style.width = '100%';
+  }
+
+  function flashGlitch(){
+    const f = document.createElement('div');
+    f.className = 'glitch-flash';
+    document.body.appendChild(f);
+    setTimeout(()=> f.remove(), 400);
+  }
+
+  function goTo(idx){
+    clearTimeout(timer);
+    flashGlitch();
+
+    slides[current].classList.remove('active','anim-in');
+    current = (idx + TOTAL) % TOTAL;
+    slides[current].classList.add('active');
+    // trigger reflow then add animation
+    slides[current].getBoundingClientRect();
+    slides[current].classList.add('anim-in');
+
+    updateDots(current);
+    updateCounter(current);
+
+    const dur = DURATIONS[current];
+    startProgress(dur);
+    timer = setTimeout(()=> goTo(current+1), dur);
+  }
+
+  // keyboard
+  document.addEventListener('keydown', e=>{
+    if(e.key==='ArrowRight'||e.key==='ArrowDown') goTo(current+1);
+    if(e.key==='ArrowLeft' ||e.key==='ArrowUp')   goTo(current-1);
+  });
+
+  // touch swipe
+  let tx=0;
+  document.addEventListener('touchstart', e=> tx=e.touches[0].clientX);
+  document.addEventListener('touchend',   e=>{
+    const dx = e.changedTouches[0].clientX - tx;
+    if(dx < -50) goTo(current+1);
+    if(dx >  50) goTo(current-1);
+  });
+
+  // ── countdown demo on slide 5 ──
+  let cdVal = 30;
+  setInterval(()=>{
+    cdVal = cdVal > 0 ? cdVal-1 : 30;
+    const el = document.getElementById('cdNum');
+    if(el) el.textContent = cdVal;
+  }, 1000);
+
+  // ── EAR status label ──
+  setInterval(()=>{
+    const el = document.getElementById('earStatus');
+    if(!el) return;
+    // sync with CSS animation (3s)
+    // just toggle label
+  }, 3000);
+
+  // ── init fullscreen on load ──
+  window.addEventListener('load', ()=>{
+    const el = document.documentElement;
+    if(el.requestFullscreen) el.requestFullscreen().catch(()=>{});
+    // start first slide
+    slides[0].classList.add('anim-in');
+    updateCounter(0);
+    startProgress(DURATIONS[0]);
+    timer = setTimeout(()=> goTo(1), DURATIONS[0]);
+  });
+
+  // click to advance
+  document.getElementById('stage').addEventListener('click', e=>{
+    if(e.target.closest('.dot')) return;
+    goTo(current+1);
+  });
+</script>
+</body>
+</html>
