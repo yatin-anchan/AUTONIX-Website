@@ -184,6 +184,27 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;color:var(--w);
 .cbadge{margin-top:1.5rem;padding:.7rem 1.8rem;display:inline-block;background:rgba(255,0,51,.08);border:1px solid var(--bd);border-radius:50px;font-family:'Orbitron',sans-serif;font-size:.68rem;letter-spacing:2px;color:var(--g)}
 
 @media(max-width:900px){.gc12,.gc21,.gc12r{grid-template-columns:1fr}.sw{padding:1.5rem}}
+
+/* ── SLIDE 10 STYLES ── */
+.s10stat{
+  padding:1.1rem 1.8rem;text-align:center;
+  background:rgba(255,0,51,.05);border:1px solid var(--bd);border-radius:10px;
+  min-width:130px;position:relative;overflow:hidden;
+  clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,10px 100%,0 calc(100% - 10px));
+  animation:s10statpulse 3s ease-in-out infinite;
+}
+.s10stat:nth-child(2){animation-delay:.5s}.s10stat:nth-child(3){animation-delay:1s}.s10stat:nth-child(4){animation-delay:1.5s}
+@keyframes s10statpulse{0%,100%{box-shadow:0 0 0 rgba(255,0,51,0)}50%{box-shadow:0 0 20px rgba(255,0,51,.2)}}
+.s10stat::after{content:'';position:absolute;bottom:0;left:0;width:100%;height:2px;background:var(--r);transform:scaleX(0);transform-origin:left;animation:sbl 3s ease-in-out infinite}
+.s10n{font-family:'Orbitron',sans-serif;font-size:1.3rem;font-weight:700;color:var(--r);display:block;margin-bottom:.25rem;filter:drop-shadow(0 0 8px var(--glow))}
+.s10l{font-size:.7rem;color:var(--g);letter-spacing:2px;text-transform:uppercase}
+.s10dev{display:flex;flex-direction:column;align-items:center;gap:.5rem}
+.s10av{width:56px;height:56px;border-radius:50%;background:rgba(255,0,51,.12);border:1.5px solid var(--bd);display:flex;align-items:center;justify-content:center;font-size:1.4rem;color:var(--r)}
+.s10dn{font-family:'Orbitron',sans-serif;font-size:.82rem;letter-spacing:2px}
+.s10dr{font-size:.8rem;color:var(--g)}
+/* radiating line on s10 */
+.s10lrl{position:absolute;top:50%;left:50%;height:1px;background:linear-gradient(90deg,rgba(255,0,51,.5),transparent);transform-origin:left center;animation:lrex 2s ease forwards;opacity:0}
+@keyframes bpulse2{0%,100%{box-shadow:0 0 5px rgba(255,0,51,.3)}50%{box-shadow:0 0 18px rgba(255,0,51,.7)}}
 </style>
 </head>
 <body>
@@ -192,9 +213,9 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;color:var(--w);
 <div id="gbg"><div class="gbg-grid"></div><div class="gbg-vig"></div></div>
 <div class="crn tl"></div><div class="crn tr"></div><div class="crn bl"></div><div class="crn br"></div>
 <div id="pbar"></div>
-<div id="ctr">01 / 09</div>
+<div id="ctr">01 / 10</div>
 <div id="ndots"></div>
-<div id="hint"><kbd>ESC</kbd>Home &nbsp;<kbd>↑↓</kbd>/<kbd>Scroll</kbd>Navigate &nbsp;<kbd>1</kbd>Replay Intro &nbsp;<kbd>F</kbd>Fullscreen</div>
+<div id="hint"><kbd>ESC</kbd>Home &nbsp;<kbd>↑↓</kbd>/<kbd>Scroll</kbd>Navigate &nbsp;<kbd>1</kbd>Replay Intro &nbsp;<kbd>2</kbd>Final Slide &nbsp;<kbd>Space</kbd>Pause &nbsp;<kbd>F</kbd>Fullscreen</div>
 <div id="cur"></div><div id="cur2"></div>
 
 <div id="stage-wrap">
@@ -422,6 +443,91 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;color:var(--w);
       <div class="tcard"><div class="tav"><i class="fas fa-user"></i></div><div class="tn">YATIN ANCHAN</div><div class="tr2">Lead Developer &amp; Architecture</div><div class="ti">Royal College of Arts,<br>Science &amp; Commerce</div></div>
     </div>
     <div class="cbadge"><i class="fas fa-university" style="margin-right:.5rem"></i>ROYAL COLLEGE OF ARTS, SCIENCE &amp; COMMERCE — 2025</div>
+  </div>
+</div>
+
+<!-- ━━ SLIDE 10: FINAL SHOWCASE — mirrors the logo reveal aesthetic ━━ -->
+<div class="sl" id="s10">
+  <!-- Radial glow behind everything -->
+  <div style="position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(255,0,51,.10) 0%,transparent 68%);pointer-events:none"></div>
+  <!-- Radiating lines (CSS-only, same as logo intro feel) -->
+  <div id="s10Lines" style="position:absolute;inset:0;overflow:hidden;pointer-events:none"></div>
+
+  <div class="sw card3d ain" style="text-align:center;max-width:1100px;position:relative;z-index:2">
+
+    <!-- Top badge -->
+    <div class="sb" style="margin:0 auto 2.5rem;font-size:.75rem;letter-spacing:4px;padding:.5rem 2rem">
+      <i class="fas fa-shield-alt" style="margin-right:.6rem"></i>PROJECT EXHIBITION 2025
+    </div>
+
+    <!-- Big centred logo — same gradient as photo -->
+    <div style="position:relative;display:inline-block;margin-bottom:1.8rem">
+      <div id="s10Title" style="
+        font-family:'Orbitron',sans-serif;
+        font-size:clamp(4.5rem,11vw,9.5rem);
+        font-weight:900;
+        letter-spacing:clamp(8px,2.2vw,22px);
+        line-height:1;
+        background:linear-gradient(135deg,#fff 15%,#ff6688 45%,var(--r) 60%,#cc0022 100%);
+        background-size:200%;
+        -webkit-background-clip:text;
+        -webkit-text-fill-color:transparent;
+        animation:tsh 3s linear infinite;
+        filter:drop-shadow(0 0 40px rgba(255,0,51,.35));
+      ">AUTONIX</div>
+      <!-- underline that expands, same as logo reveal -->
+      <div style="position:absolute;bottom:-10px;left:50%;transform:translateX(-50%);height:2px;background:linear-gradient(90deg,transparent,var(--r),transparent);box-shadow:0 0 18px var(--glow);animation:tuex 1.8s ease forwards;width:0%"></div>
+    </div>
+
+    <!-- Subtitle lines matching screenshot exactly -->
+    <p style="font-family:'Orbitron',sans-serif;font-size:clamp(.65rem,1.4vw,.88rem);letter-spacing:5px;color:var(--g);text-transform:uppercase;margin-bottom:.7rem">
+      INTELLIGENT RIDER SAFETY ASSISTANCE &amp; MONITORING
+    </p>
+    <p style="font-size:clamp(.95rem,1.9vw,1.2rem);color:var(--g);letter-spacing:2px;margin-bottom:3rem">
+      <span style="color:var(--r);font-weight:700">Safety for all</span> — Accessible to all
+    </p>
+
+    <!-- Divider with red glow -->
+    <div style="width:280px;height:1px;background:linear-gradient(90deg,transparent,var(--r),transparent);box-shadow:0 0 12px var(--glow);margin:0 auto 2.8rem"></div>
+
+    <!-- Key stats row — glowing cards -->
+    <div style="display:flex;gap:1.4rem;justify-content:center;flex-wrap:wrap;margin-bottom:2.8rem">
+      <div class="s10stat"><span class="s10n">Android</span><span class="s10l">NATIVE APP</span></div>
+      <div class="s10stat"><span class="s10n">MediaPipe</span><span class="s10l">ML ENGINE</span></div>
+      <div class="s10stat"><span class="s10n">Real-time</span><span class="s10l">MONITORING</span></div>
+      <div class="s10stat"><span class="s10n">24 / 7</span><span class="s10l">PROTECTION</span></div>
+    </div>
+
+    <!-- Team row — compact version -->
+    <div style="display:flex;gap:2rem;justify-content:center;flex-wrap:wrap;margin-bottom:2rem">
+      <div class="s10dev">
+        <div class="s10av"><i class="fas fa-user"></i></div>
+        <div class="s10dn">MAIZAH SHAIKH</div>
+        <div class="s10dr">Lead Developer &amp; Research</div>
+      </div>
+      <div style="width:1px;background:linear-gradient(to bottom,transparent,var(--bd),transparent);align-self:stretch"></div>
+      <div class="s10dev">
+        <div class="s10av"><i class="fas fa-user"></i></div>
+        <div class="s10dn">YATIN ANCHAN</div>
+        <div class="s10dr">Lead Developer &amp; Architecture</div>
+      </div>
+    </div>
+
+    <!-- College badge -->
+    <div style="font-family:'Orbitron',sans-serif;font-size:.68rem;letter-spacing:2px;color:var(--d);margin-top:.5rem">
+      <i class="fas fa-university" style="margin-right:.5rem;color:var(--bd)"></i>
+      ROYAL COLLEGE OF ARTS, SCIENCE &amp; COMMERCE — 2025
+    </div>
+
+    <!-- PAUSED indicator (hidden by default) -->
+    <div id="pausedBadge" style="
+      display:none;position:fixed;top:28px;left:50%;transform:translateX(-50%);
+      font-family:'Orbitron',sans-serif;font-size:.72rem;letter-spacing:4px;
+      color:var(--r);background:rgba(255,0,51,.12);border:1px solid var(--bd);
+      border-radius:30px;padding:.4rem 1.4rem;z-index:9999;
+      animation:bpulse2 1.2s ease-in-out infinite;
+    ">⏸ PAUSED — PRESS SPACE TO RESUME</div>
+
   </div>
 </div>
 
@@ -1182,8 +1288,8 @@ const SLIDES=Array.from(document.querySelectorAll('.sl'));
 const TOTAL=SLIDES.length; // includes introSlide as index 0
 let current=0,stimer=null,presenting=false;
 
-const DURS=[0,7000,6500,9000,8500,8000,7500,8000,7500,7000];
-// slide 0 has no auto-advance (controlled by intro)
+const DURS=[0,7000,6500,9000,8500,8000,7500,8000,7500,7000,0];
+// slide 0 = intro (canvas-controlled), slide 10 = final (stays until user acts)
 
 const nd=document.getElementById('ndots');
 SLIDES.forEach((_,i)=>{
@@ -1206,6 +1312,8 @@ function startPbar(dur){
 }
 function flash(){const f=document.createElement('div');f.className='gfl';document.body.appendChild(f);setTimeout(()=>f.remove(),420)}
 
+let paused=false;
+
 function goTo(idx){
   clearTimeout(stimer);
   if(idx!==current)flash();
@@ -1216,9 +1324,56 @@ function goTo(idx){
   SLIDES[current].getBoundingClientRect();
   if(current>0)SLIDES[current].classList.add('ain');
   updUI(current);
-  const dur=DURS[current]||7000;
-  startPbar(dur);
-  if(current>0)stimer=setTimeout(()=>goTo(current+1),dur);
+  paused=false;
+  hidePauseBadge();
+  // build s10 lines when arriving at final slide
+  if(current===TOTAL-1)buildS10Lines();
+  const dur=DURS[current]||0;
+  if(dur>0){startPbar(dur);stimer=setTimeout(()=>goTo(current+1),dur);}
+  else{document.getElementById('pbar').style.width='100%';}
+}
+
+function togglePause(){
+  if(!presenting)return;
+  const dur=DURS[current]||0;
+  if(dur===0){
+    // on a permanent slide — Space just stays, show paused badge as visual confirmation
+    paused=true;showPauseBadge();
+    return;
+  }
+  if(!paused){
+    // pause: cancel timer, freeze progress bar
+    paused=true;
+    clearTimeout(stimer);
+    const b=document.getElementById('pbar');
+    const computedW=getComputedStyle(b).width;
+    b.style.transition='none';
+    b.style.width=computedW;
+    showPauseBadge();
+  } else {
+    // resume: restart timer for remaining time (approx from bar width)
+    paused=false;
+    hidePauseBadge();
+    const b=document.getElementById('pbar');
+    const pct=parseFloat(b.style.width)/window.innerWidth;
+    const remaining=Math.max(500,(DURS[current]||7000)*(1-pct));
+    b.style.transition=`width ${remaining}ms linear`;
+    b.style.width='100%';
+    stimer=setTimeout(()=>goTo(current+1),remaining);
+  }
+}
+
+function showPauseBadge(){const p=document.getElementById('pausedBadge');if(p)p.style.display='block'}
+function hidePauseBadge(){const p=document.getElementById('pausedBadge');if(p)p.style.display='none'}
+
+function buildS10Lines(){
+  const c=document.getElementById('s10Lines');if(!c)return;
+  c.innerHTML='';
+  for(let i=0;i<32;i++){
+    const l=document.createElement('div');l.className='s10lrl';
+    l.style.cssText=`transform:translateX(-50%) translateY(-50%) rotate(${i*(360/32)}deg);animation-delay:${i*.04}s`;
+    c.appendChild(l);
+  }
 }
 
 // Called when intro finishes
@@ -1250,7 +1405,7 @@ function restartIntro(){
 let scrollCooldown=false;
 window.addEventListener('wheel',e=>{
   e.preventDefault();
-  if(scrollCooldown)return;
+  if(scrollCooldown||paused)return;
   scrollCooldown=true;
   if(presenting){
     if(e.deltaY>0)goTo(current+1);
@@ -1269,11 +1424,11 @@ window.addEventListener('keydown',e=>{
       break;
     case 'ArrowRight':case 'ArrowDown':
       e.preventDefault();
-      if(presenting)goTo(current+1);
+      if(presenting&&!paused)goTo(current+1);
       break;
     case 'ArrowLeft':case 'ArrowUp':
       e.preventDefault();
-      if(presenting)goTo(current-1);
+      if(presenting&&!paused)goTo(current-1);
       break;
     case 'f':case 'F':
       if(!document.fullscreenElement)document.documentElement.requestFullscreen().catch(()=>{});
@@ -1281,15 +1436,20 @@ window.addEventListener('keydown',e=>{
       break;
     case ' ':
       e.preventDefault();
-      if(presenting)goTo(current+1);
-      else beginPresentation();
+      if(!presenting){beginPresentation();}
+      else{togglePause();}
       break;
     case '1':
-      // '1' restarts the cinematic intro from the very beginning
       e.preventDefault();
       restartIntro();
       break;
-    case '2':case '3':case '4':case '5':case '6':case '7':case '8':case '9':
+    case '2':
+      // jump straight to final showcase slide
+      e.preventDefault();
+      presenting=true;
+      goTo(TOTAL-1);
+      break;
+    case '3':case '4':case '5':case '6':case '7':case '8':case '9':
       e.preventDefault();
       {const idx=parseInt(e.key);
       if(idx<=TOTAL-1){presenting=true;goTo(idx)}}
