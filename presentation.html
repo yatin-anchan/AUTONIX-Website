@@ -194,7 +194,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;color:var(--w);
 <div id="pbar"></div>
 <div id="ctr">01 / 09</div>
 <div id="ndots"></div>
-<div id="hint"><kbd>ESC</kbd>Home &nbsp;<kbd>↑↓</kbd>/<kbd>Scroll</kbd>Navigate &nbsp;<kbd>F</kbd>Fullscreen</div>
+<div id="hint"><kbd>ESC</kbd>Home &nbsp;<kbd>↑↓</kbd>/<kbd>Scroll</kbd>Navigate &nbsp;<kbd>1</kbd>Replay Intro &nbsp;<kbd>F</kbd>Fullscreen</div>
 <div id="cur"></div><div id="cur2"></div>
 
 <div id="stage-wrap">
@@ -474,13 +474,13 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;color:var(--w);
 
   const RED='#ff0033', REDGLOW='rgba(255,0,51,';
   let startTime=null,animId=null;
-  const TOTAL_DUR=12000; // 12s total
+  const TOTAL_DUR=20000; // 20s total — cinematic pace
 
   // Utility: draw glowing line segment
   function glowLine(x1,y1,x2,y2,alpha,width,blur){
     ctx.save();
-    ctx.shadowBlur=blur||18;ctx.shadowColor=`rgba(255,0,51,${alpha})`;
-    ctx.strokeStyle=`rgba(255,0,51,${alpha})`;ctx.lineWidth=width||1.5;
+    ctx.shadowBlur=blur||28;ctx.shadowColor=`rgba(255,0,51,${alpha})`;
+    ctx.strokeStyle=`rgba(255,0,51,${alpha})`;ctx.lineWidth=width||3;
     ctx.lineCap='round';ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
     ctx.restore();
   }
@@ -491,9 +491,9 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;color:var(--w);
     ctx.save();ctx.lineCap='round';ctx.lineJoin='round';
     for(let i=1;i<points.length;i++){
       const t=i/points.length;
-      ctx.strokeStyle=`rgba(255,0,51,${alpha*t*0.6})`;
-      ctx.lineWidth=(width||1.5)*t;
-      ctx.shadowBlur=12*t;ctx.shadowColor='rgba(255,0,51,.5)';
+      ctx.strokeStyle=`rgba(255,0,51,${alpha*t*0.7})`;
+      ctx.lineWidth=(width||4)*t;
+      ctx.shadowBlur=20*t;ctx.shadowColor='rgba(255,0,51,.6)';
       ctx.beginPath();ctx.moveTo(points[i-1].x,points[i-1].y);ctx.lineTo(points[i].x,points[i].y);ctx.stroke();
     }
     ctx.restore();
@@ -621,131 +621,159 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;color:var(--w);
 
   // Main render
   function render(ts){
+    // Handle external restart request
+    if(window._introRestart){
+      window._introRestart=false;
+      window._introFinished=false;
+      startTime=null;
+      particles=[];
+      logoParticles=[];
+      buildConvLines();
+      document.getElementById('introLogo').style.opacity='0';
+    }
     if(!startTime)startTime=ts;
     const elapsed=ts-startTime;
     const T=Math.min(elapsed/TOTAL_DUR,1);
     ctx.clearRect(0,0,W,H);
 
     // Scene boundaries (0-1 normalized time)
-    // S1:lines 0-.30 | S2:convergence .30-.50 | S3:particle sphere .50-.65 | S4:morph bike .65-.78 | S5:dissolve->logo .78-.90 | S6:logo hold .90-1.0
-    const s1End=.30,s2End=.50,s3End=.65,s4End=.78,s5End=.90;
+    // S1:lines 0-.32 | S2:convergence .32-.50 | S3:sphere .50-.63 | S4:morph bike .63-.75 | S5:dissolve→particles .75-.88 | S6:particle text hold .88-.95 | S7:crossfade to DOM logo .95-1.0
+    const s1End=.32,s2End=.50,s3End=.63,s4End=.75,s5End=.88,s6End=.95;
 
     if(T<s1End){
       // ─── SCENES 1-5: Red line traces environments ───
-      const sceneT=T/s1End; // 0->1 across all line scenes
+      const sceneT=T/s1End;
       const SCENE_COUNT=5;
       const sc=Math.floor(sceneT*(SCENE_COUNT));
       const scT=(sceneT*SCENE_COUNT)%1;
       const eT=easeInOut(scT);
 
-      // Dark semi-transparent wipe for trail effect
-      ctx.fillStyle='rgba(0,0,0,.08)';ctx.fillRect(0,0,W,H);
+      ctx.fillStyle='rgba(0,0,0,.07)';ctx.fillRect(0,0,W,H);
 
-      // Draw path trail
-      const trail=[];const TRAIL_LEN=60;
+      const trail=[];const TRAIL_LEN=80;
       for(let i=0;i<TRAIL_LEN;i++){
-        const tt=Math.max(0,eT-i*.015);
+        const tt=Math.max(0,eT-i*.013);
         trail.push(getPath(Math.min(sc,4),tt));
       }
-      drawTrail(trail,.9,2.5);
+      drawTrail(trail,.95,4);
 
-      // Draw leading dot
+      // Leading dot — bigger, brighter
       const pt=getPath(Math.min(sc,4),eT);
-      ctx.save();ctx.shadowBlur=30;ctx.shadowColor='rgba(255,0,51,.9)';
-      ctx.fillStyle='rgba(255,0,51,.95)';ctx.beginPath();ctx.arc(pt.x,pt.y,4,0,Math.PI*2);ctx.fill();
-      // glow rings
-      for(let r2=8;r2<24;r2+=6){ctx.beginPath();ctx.arc(pt.x,pt.y,r2,0,Math.PI*2);ctx.strokeStyle=`rgba(255,0,51,${.15*(1-r2/24)})`;ctx.lineWidth=1;ctx.stroke()}
+      ctx.save();ctx.shadowBlur=40;ctx.shadowColor='rgba(255,0,51,1)';
+      ctx.fillStyle='rgba(255,0,51,1)';ctx.beginPath();ctx.arc(pt.x,pt.y,6,0,Math.PI*2);ctx.fill();
+      for(let r2=10;r2<32;r2+=7){ctx.beginPath();ctx.arc(pt.x,pt.y,r2,0,Math.PI*2);ctx.strokeStyle=`rgba(255,0,51,${.2*(1-r2/32)})`;ctx.lineWidth=1.5;ctx.stroke()}
       ctx.restore();
 
-      // Scene label
       const labels=['ENERGY FLOW','MOUNTAIN RIDGE','CITY SKYLINE','RACETRACK','GEOMETRIC FORM'];
-      ctx.save();ctx.globalAlpha=Math.sin(scT*Math.PI)*.35;
-      ctx.font=`700 ${Math.round(H*.018)}px Orbitron,sans-serif`;
-      ctx.fillStyle='rgba(255,0,51,.6)';ctx.textAlign='center';ctx.letterSpacing='8px';
+      ctx.save();ctx.globalAlpha=Math.sin(scT*Math.PI)*.45;
+      ctx.font=`700 ${Math.round(H*.02)}px Orbitron,sans-serif`;
+      ctx.fillStyle='rgba(255,0,51,.8)';ctx.textAlign='center';
       ctx.fillText(labels[Math.min(sc,4)],W/2,H*.92);ctx.restore();
 
-      // Spawn occasional burst particles
-      if(Math.random()<.15)spawnBurst(pt.x,pt.y,2,.8,1.5);
+      if(Math.random()<.18)spawnBurst(pt.x,pt.y,2,.8,1.5);
 
     } else if(T<s2End){
-      // ─── CONVERGENCE: lines from all directions → center ───
+      // ─── CONVERGENCE ───
       const cT=easeInOut((T-s1End)/(s2End-s1End));
-      ctx.fillStyle='rgba(0,0,0,.12)';ctx.fillRect(0,0,W,H);
-      convLines.forEach((cl,i)=>{
+      ctx.fillStyle='rgba(0,0,0,.10)';ctx.fillRect(0,0,W,H);
+      convLines.forEach((cl)=>{
         const progress=Math.max(0,Math.min(1,(cT-cl.delay*.3)/(1-cl.delay*.3)));
         const ex=lerp(cl.sx,W/2,easeOut(progress));
         const ey=lerp(cl.sy,H/2,easeOut(progress));
-        glowLine(cl.sx,cl.sy,ex,ey,.7+progress*.3,1.5,16);
+        glowLine(cl.sx,cl.sy,ex,ey,.7+progress*.3,2.5,20);
         if(progress>.9)spawnBurst(ex,ey,1,.5,1);
       });
-      // Central burst when converged
       if(cT>.7){
         const ba=(cT-.7)/.3;
-        ctx.save();ctx.shadowBlur=60*ba;ctx.shadowColor='rgba(255,0,51,.9)';
-        ctx.fillStyle=`rgba(255,0,51,${ba*.8})`;ctx.beginPath();ctx.arc(W/2,H/2,4+ba*12,0,Math.PI*2);ctx.fill();ctx.restore();
-        if(Math.random()<.4)spawnBurst(W/2,H/2,3,2+ba*3,2);
+        ctx.save();ctx.shadowBlur=80*ba;ctx.shadowColor='rgba(255,0,51,.9)';
+        ctx.fillStyle=`rgba(255,0,51,${ba*.85})`;ctx.beginPath();ctx.arc(W/2,H/2,5+ba*16,0,Math.PI*2);ctx.fill();ctx.restore();
+        if(Math.random()<.5)spawnBurst(W/2,H/2,4,2.5+ba*3,2);
       }
 
     } else if(T<s3End){
       // ─── PARTICLE SPHERE ───
       const sT=easeInOut((T-s2End)/(s3End-s2End));
-      ctx.fillStyle='rgba(0,0,0,.15)';ctx.fillRect(0,0,W,H);
+      ctx.fillStyle='rgba(0,0,0,.13)';ctx.fillRect(0,0,W,H);
       const angle=sT*Math.PI*3;
-      const r=Math.min(W,H)*.25*sT;
+      const r=Math.min(W,H)*.26*sT;
       drawSphere(W/2,H/2,r,angle,.9,0);
-      // orbit ring
-      ctx.save();ctx.strokeStyle=`rgba(255,0,51,${sT*.4})`;ctx.lineWidth=1;
-      ctx.shadowBlur=10;ctx.shadowColor='rgba(255,0,51,.4)';
-      ctx.beginPath();ctx.ellipse(W/2,H/2,r*1.4,r*.4,angle,0,Math.PI*2);ctx.stroke();
+      ctx.save();ctx.strokeStyle=`rgba(255,0,51,${sT*.45})`;ctx.lineWidth=1.5;
+      ctx.shadowBlur=12;ctx.shadowColor='rgba(255,0,51,.4)';
+      ctx.beginPath();ctx.ellipse(W/2,H/2,r*1.45,r*.42,angle,0,Math.PI*2);ctx.stroke();
       ctx.restore();
 
     } else if(T<s4End){
-      // ─── MORPH TO VEHICLE SILHOUETTE ───
+      // ─── MORPH TO BIKE ───
       const mT=easeInOut((T-s3End)/(s4End-s3End));
-      ctx.fillStyle='rgba(0,0,0,.15)';ctx.fillRect(0,0,W,H);
+      ctx.fillStyle='rgba(0,0,0,.13)';ctx.fillRect(0,0,W,H);
       const angle=mT*Math.PI*.5+(T-s2End)*Math.PI*3;
-      const r=Math.min(W,H)*.25;
+      const r=Math.min(W,H)*.26;
       drawSphere(W/2,H/2,r,angle,.9,mT);
-      // draw motorcycle outline emerging
-      if(mT>.4){
-        const a=(mT-.4)/.6;
-        drawMotorcycle(W/2,H/2,r*1.8,a);
+      if(mT>.35){
+        const a=(mT-.35)/.65;
+        drawMotorcycle(W/2,H*.52,r*2,a);
       }
 
     } else if(T<s5End){
-      // ─── DISSOLVE → LOGO PARTICLES ───
+      // ─── DISSOLVE BIKE → PARTICLES FORMING LOGO ───
       const dT=easeInOut((T-s4End)/(s5End-s4End));
-      ctx.fillStyle='rgba(0,0,0,.2)';ctx.fillRect(0,0,W,H);
-      if(dT<.4){
-        // vehicle fading out
-        const fa=1-dT/.4;
-        drawMotorcycle(W/2,H/2,Math.min(W,H)*.45,fa);
-        if(Math.random()<.3)spawnBurst(W/2+Math.random()*200-100,H/2+Math.random()*100-50,2,1.5,1.5);
+      ctx.fillStyle='rgba(0,0,0,.18)';ctx.fillRect(0,0,W,H);
+      if(dT<.35){
+        const fa=1-dT/.35;
+        drawMotorcycle(W/2,H*.52,Math.min(W,H)*.48,fa);
+        if(Math.random()<.35)spawnBurst(W/2+(Math.random()*240-120),H*.52+(Math.random()*120-60),2,1.5,1.5);
       }
-      // logo particles forming
       if(logoParticles.length===0)buildLogoParticles();
-      const targetReach=dT;
+      const reach=dT;
       logoParticles.forEach(lp=>{
         if(!lp.arrived){
-          lp.x=lerp(lp.x,lp.tx,targetReach*.08+.02);
-          lp.y=lerp(lp.y,lp.ty,targetReach*.08+.02);
-          const dist=Math.hypot(lp.x-lp.tx,lp.y-lp.ty);
-          if(dist<2)lp.arrived=true;
+          lp.x=lerp(lp.x,lp.tx,reach*.09+.025);
+          lp.y=lerp(lp.y,lp.ty,reach*.09+.025);
+          if(Math.hypot(lp.x-lp.tx,lp.y-lp.ty)<2)lp.arrived=true;
         }
-        const a=Math.min(1,targetReach*2)*0.9;
+        const a=Math.min(1,reach*2.2)*.95;
         ctx.fillStyle=`rgba(255,0,51,${a})`;
-        ctx.fillRect(lp.x,lp.y,1.5,1.5);
+        ctx.fillRect(lp.x,lp.y,2,2);
       });
 
+    } else if(T<s6End){
+      // ─── PARTICLE TEXT HOLD — stays fully formed ───
+      ctx.fillStyle='rgba(0,0,0,.04)';ctx.fillRect(0,0,W,H);
+      logoParticles.forEach(lp=>{
+        // lock in place — tiny drift for live feel
+        lp.x+=(Math.random()-.5)*.3;
+        lp.y+=(Math.random()-.5)*.3;
+        lp.x=lerp(lp.x,lp.tx,.25);
+        lp.y=lerp(lp.y,lp.ty,.25);
+        ctx.fillStyle='rgba(255,0,51,.95)';
+        ctx.shadowBlur=4;ctx.shadowColor='rgba(255,0,51,.4)';
+        ctx.fillRect(lp.x,lp.y,2,2);
+      });
+      ctx.shadowBlur=0;
+      // subtle glow pulse under text
+      const pulse=.5+Math.sin(T*TOTAL_DUR/1000*2)*.15;
+      ctx.save();ctx.shadowBlur=60*pulse;ctx.shadowColor='rgba(255,0,51,.3)';
+      ctx.strokeStyle='rgba(255,0,51,0)';ctx.beginPath();ctx.ellipse(W/2,H/2,W*.3,H*.12,0,0,Math.PI*2);ctx.stroke();
+      ctx.restore();
+      // remnant particles drift away
+      if(Math.random()<.04)particles.push(new Particle(W/2+(Math.random()-.5)*W*.35,H/2+(Math.random()-.5)*H*.15,(Math.random()-.5)*.4,(Math.random()-.15)*.4,40,1.2));
+
     } else {
-      // ─── LOGO HOLD: clean glow fade ───
-      const hT=(T-s5End)/(1-s5End);
-      ctx.fillStyle='rgba(0,0,0,.08)';ctx.fillRect(0,0,W,H);
-      // fade canvas out, bring in DOM logo
-      const fadeOut=Math.min(1,hT*3);
-      document.getElementById('introLogo').style.opacity=fadeOut.toString();
-      // subtle particle remnants
-      if(Math.random()<.05)particles.push(new Particle(W/2+(Math.random()-.5)*W*.4,H/2+(Math.random()-.5)*H*.2,(Math.random()-.5)*.5,(Math.random()-.1)*.5,30,1));
+      // ─── CROSSFADE: particle text fades OUT, DOM logo fades IN ───
+      const xT=(T-s6End)/(1-s6End); // 0→1
+      ctx.fillStyle=`rgba(0,0,0,${.06+xT*.15})`;ctx.fillRect(0,0,W,H);
+      // fade particle text out
+      const ptAlpha=(1-xT)*0.95;
+      if(ptAlpha>0){
+        logoParticles.forEach(lp=>{
+          lp.x=lerp(lp.x,lp.tx,.3);lp.y=lerp(lp.y,lp.ty,.3);
+          ctx.fillStyle=`rgba(255,0,51,${ptAlpha})`;ctx.fillRect(lp.x,lp.y,2,2);
+        });
+      }
+      // DOM logo fades in from 0
+      const domAlpha=Math.min(1,xT*1.4);
+      document.getElementById('introLogo').style.opacity=domAlpha.toString();
+      if(Math.random()<.03)particles.push(new Particle(W/2+(Math.random()-.5)*W*.4,H/2+(Math.random()-.5)*H*.2,(Math.random()-.5)*.4,(Math.random()-.1)*.4,30,1));
     }
 
     // Update & draw global particles
@@ -754,42 +782,285 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;color:var(--w);
 
     if(T<1){animId=requestAnimationFrame(render)}
     else{
-      // intro done
+      // intro done — show logo and schedule slide transition
       document.getElementById('introLogo').style.opacity='1';
-      setTimeout(()=>beginPresentation(),2000);
+      // Keep looping so restart can work
+      animId=requestAnimationFrame(render);
+      if(!window._introFinished){
+        window._introFinished=true;
+        setTimeout(()=>{ if(!presenting)beginPresentation(); },3500); // 3.5s hold on logo
+      }
     }
   }
 
-  // Motorcycle silhouette using lines/arcs
+  // ── SUPERSPORT MOTORCYCLE ──────────────────────────────────────────
+  // Modelled on a modern inline-4 supersport (CBR/R1/ZX-10R profile)
+  // Coordinate system: 0,0 = bike centre. Unit space ≈ 460px wide.
   function drawMotorcycle(cx,cy,scale,alpha){
+    if(alpha<=0)return;
     ctx.save();
-    ctx.strokeStyle=`rgba(255,0,51,${alpha})`;ctx.lineWidth=2;
-    ctx.shadowBlur=20*alpha;ctx.shadowColor=`rgba(255,0,51,${alpha})`;
+    ctx.translate(cx,cy);
+    const s=scale/460;
+    ctx.scale(s,s);
     ctx.lineCap='round';ctx.lineJoin='round';
-    const s=scale/300;
-    ctx.translate(cx,cy);ctx.scale(s,s);
-    // rear wheel
-    ctx.beginPath();ctx.arc(-90,40,55,0,Math.PI*2);ctx.stroke();
-    ctx.beginPath();ctx.arc(-90,40,30,0,Math.PI*2);ctx.strokeStyle=`rgba(255,0,51,${alpha*.5})`;ctx.stroke();
-    // front wheel
-    ctx.strokeStyle=`rgba(255,0,51,${alpha})`;
-    ctx.beginPath();ctx.arc(90,40,50,0,Math.PI*2);ctx.stroke();
-    ctx.beginPath();ctx.arc(90,40,28,0,Math.PI*2);ctx.strokeStyle=`rgba(255,0,51,${alpha*.5})`;ctx.stroke();
-    // frame
-    ctx.strokeStyle=`rgba(255,0,51,${alpha})`;ctx.lineWidth=2.5;
-    ctx.beginPath();ctx.moveTo(-90,-15);ctx.lineTo(-20,-70);ctx.lineTo(40,-70);ctx.lineTo(90,-5);ctx.stroke();
-    ctx.beginPath();ctx.moveTo(-90,-15);ctx.lineTo(30,-15);ctx.lineTo(90,-5);ctx.stroke();
-    ctx.beginPath();ctx.moveTo(-20,-70);ctx.lineTo(-20,-15);ctx.stroke();
-    // seat
-    ctx.beginPath();ctx.moveTo(-50,-72);ctx.bezierCurveTo(-20,-85,20,-85,40,-72);ctx.stroke();
-    // handlebars
-    ctx.beginPath();ctx.moveTo(60,-80);ctx.lineTo(80,-60);ctx.lineTo(110,-55);ctx.stroke();
-    // engine block
-    ctx.beginPath();ctx.rect(-20,-50,40,30);ctx.stroke();
-    // exhaust
-    ctx.beginPath();ctx.moveTo(-90,-15);ctx.quadraticCurveTo(-120,10,-105,50);ctx.stroke();
-    // front fork
-    ctx.beginPath();ctx.moveTo(80,-60);ctx.lineTo(90,-5);ctx.stroke();
+
+    // Helpers
+    const R=(a)=>`rgba(255,0,51,${Math.min(1,(a*alpha)).toFixed(3)})`;
+    const W2=(a)=>`rgba(255,255,255,${Math.min(1,(a*alpha)).toFixed(3)})`;
+    function glow(col,lw,blur){ctx.strokeStyle=col;ctx.lineWidth=lw;ctx.shadowBlur=blur*alpha;ctx.shadowColor=R(.9)}
+    function fill(col,blur){ctx.fillStyle=col;ctx.shadowBlur=blur*alpha;ctx.shadowColor=R(.7)}
+
+    // ── REAR WHEEL (left side of screen, offset -120) ──────────────
+    glow(R(.92),3,20);
+    ctx.beginPath();ctx.arc(-120,60,70,0,Math.PI*2);ctx.stroke();
+    glow(R(.4),2,6);
+    ctx.beginPath();ctx.arc(-120,60,52,0,Math.PI*2);ctx.stroke();
+    // 6 spokes
+    glow(R(.55),1.5,8);
+    for(let i=0;i<6;i++){
+      const a=i/6*Math.PI*2;
+      ctx.beginPath();
+      ctx.moveTo(-120+Math.cos(a)*14,60+Math.sin(a)*14);
+      ctx.lineTo(-120+Math.cos(a)*50,60+Math.sin(a)*50);
+      ctx.stroke();
+    }
+    // hub
+    glow(R(.8),2.5,10);
+    ctx.beginPath();ctx.arc(-120,60,14,0,Math.PI*2);ctx.stroke();
+    // brake disc
+    glow(R(.45),1.5,5);
+    ctx.beginPath();ctx.arc(-120,60,62,Math.PI*.8,Math.PI*1.7);ctx.stroke();
+
+    // ── FRONT WHEEL (right side, offset +120) ──────────────────────
+    glow(R(.92),3,20);
+    ctx.beginPath();ctx.arc(125,62,65,0,Math.PI*2);ctx.stroke();
+    glow(R(.4),2,6);
+    ctx.beginPath();ctx.arc(125,62,48,0,Math.PI*2);ctx.stroke();
+    for(let i=0;i<6;i++){
+      const a=i/6*Math.PI*2;
+      glow(R(.55),1.5,8);
+      ctx.beginPath();
+      ctx.moveTo(125+Math.cos(a)*12,62+Math.sin(a)*12);
+      ctx.lineTo(125+Math.cos(a)*46,62+Math.sin(a)*46);
+      ctx.stroke();
+    }
+    glow(R(.8),2.5,10);
+    ctx.beginPath();ctx.arc(125,62,12,0,Math.PI*2);ctx.stroke();
+    // front brake disc
+    glow(R(.45),1.5,5);
+    ctx.beginPath();ctx.arc(125,62,56,Math.PI*.15,Math.PI*.95);ctx.stroke();
+
+    // ── SWINGARM ───────────────────────────────────────────────────
+    glow(R(.65),3,10);
+    ctx.beginPath();ctx.moveTo(-28,22);ctx.quadraticCurveTo(-72,42,-120,58);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(-28,14);ctx.quadraticCurveTo(-72,28,-120,46);ctx.stroke();
+    // swingarm brace
+    glow(R(.35),1.5,5);
+    ctx.beginPath();ctx.moveTo(-65,25);ctx.lineTo(-75,48);ctx.stroke();
+
+    // ── MAIN FRAME ─────────────────────────────────────────────────
+    // Top tube: headstock to seat area
+    glow(R(.9),4,18);
+    ctx.beginPath();ctx.moveTo(90,-22);ctx.bezierCurveTo(40,-52,-5,-52,-35,-22);ctx.stroke();
+    // Down tube: headstock to engine
+    glow(R(.8),3.5,14);
+    ctx.beginPath();ctx.moveTo(90,-22);ctx.bezierCurveTo(75,-5,55,5,10,8);ctx.stroke();
+    // Seat sub-frame
+    glow(R(.7),2.5,10);
+    ctx.beginPath();ctx.moveTo(-35,-22);ctx.bezierCurveTo(-55,-28,-90,-18,-118,-5);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(-35,-10);ctx.bezierCurveTo(-55,-12,-90,-5,-118,5);ctx.stroke();
+    // Lower frame rail
+    glow(R(.65),2.5,10);
+    ctx.beginPath();ctx.moveTo(10,8);ctx.bezierCurveTo(-5,22,-18,28,-28,22);ctx.stroke();
+
+    // ── ENGINE BLOCK ───────────────────────────────────────────────
+    glow(R(.75),2.5,12);
+    ctx.beginPath();
+    ctx.moveTo(55,5);ctx.lineTo(58,40);ctx.lineTo(-15,42);ctx.lineTo(-20,8);ctx.closePath();ctx.stroke();
+    // cylinder fins
+    glow(R(.4),1.2,5);
+    for(let i=0;i<4;i++){
+      const fy=8+i*8;
+      ctx.beginPath();ctx.moveTo(-18,fy);ctx.lineTo(55,fy-2);ctx.stroke();
+    }
+    // intake velocity stacks (top of engine)
+    glow(R(.5),1.5,6);
+    for(let i=0;i<4;i++){
+      const ix=-10+i*16;
+      ctx.beginPath();ctx.moveTo(ix,5);ctx.lineTo(ix-2,-12);ctx.stroke();
+    }
+
+    // ── FUEL TANK ──────────────────────────────────────────────────
+    // Large sporty tank with sharp edges
+    glow(R(.95),3.5,20);
+    ctx.beginPath();
+    ctx.moveTo(85,-18);
+    ctx.bezierCurveTo(68,-48,28,-58,-5,-45);
+    ctx.bezierCurveTo(-18,-38,-28,-28,-35,-22);
+    ctx.bezierCurveTo(-15,-18,30,-14,85,-18);
+    ctx.closePath();ctx.stroke();
+    // tank highlight crease
+    glow(R(1),2,18);
+    ctx.beginPath();ctx.moveTo(78,-24);ctx.bezierCurveTo(50,-52,15,-58,-5,-45);ctx.stroke();
+    // knee recess
+    glow(R(.4),1.5,6);
+    ctx.beginPath();ctx.moveTo(20,-20);ctx.bezierCurveTo(10,-30,0,-38,-5,-42);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(45,-18);ctx.bezierCurveTo(38,-28,30,-38,25,-44);ctx.stroke();
+
+    // ── BELLYPAN / LOWER FAIRING ───────────────────────────────────
+    glow(R(.9),3,16);
+    ctx.beginPath();
+    ctx.moveTo(102,-12);             // front lower
+    ctx.bezierCurveTo(112,8,105,40,85,55);   // front curve down
+    ctx.lineTo(12,50);               // bottom edge
+    ctx.lineTo(-20,44);
+    ctx.bezierCurveTo(-8,18,5,-5,38,-8);
+    ctx.bezierCurveTo(62,-10,84,-18,102,-12);
+    ctx.closePath();ctx.stroke();
+    // Belly pan lower chin scoop
+    glow(R(.55),2,8);
+    ctx.beginPath();ctx.moveTo(100,18);ctx.bezierCurveTo(108,35,100,52,82,58);ctx.stroke();
+    // air intake grille on fairing
+    glow(R(.35),1.2,5);
+    ctx.beginPath();ctx.moveTo(68,10);ctx.lineTo(72,30);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(78,8);ctx.lineTo(82,28);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(88,6);ctx.lineTo(90,24);ctx.stroke();
+
+    // ── UPPER FAIRING / NOSE ───────────────────────────────────────
+    // Aggressive sharp-nose fairing  
+    glow(R(.92),3,16);
+    ctx.beginPath();
+    ctx.moveTo(78,-38);
+    ctx.bezierCurveTo(88,-28,100,-18,102,-12);
+    ctx.bezierCurveTo(98,-18,90,-22,78,-38);
+    ctx.closePath();ctx.stroke();
+    // upper fairing crease line
+    glow(R(1),2,14);
+    ctx.beginPath();ctx.moveTo(78,-40);ctx.bezierCurveTo(90,-32,100,-20,102,-12);ctx.stroke();
+
+    // ── HEADLIGHT — aggressive twin LED ───────────────────────────
+    glow(R(.95),2.5,18);
+    // main headlight body — angular
+    ctx.beginPath();
+    ctx.moveTo(110,-20);ctx.lineTo(122,-8);ctx.lineTo(116,10);
+    ctx.lineTo(98,14);ctx.lineTo(90,-2);ctx.lineTo(100,-18);
+    ctx.closePath();ctx.stroke();
+    // inner bright lens
+    glow(R(1),2,28);
+    ctx.beginPath();ctx.moveTo(107,-16);ctx.lineTo(116,-6);ctx.lineTo(112,6);ctx.lineTo(97,9);ctx.lineTo(93,0);ctx.closePath();ctx.stroke();
+    // DRL strip — top
+    glow(R(.8),2.5,16);
+    ctx.beginPath();ctx.moveTo(106,-24);ctx.lineTo(125,-13);ctx.stroke();
+    // DRL strip — bottom
+    glow(R(.6),1.5,10);
+    ctx.beginPath();ctx.moveTo(100,16);ctx.lineTo(118,10);ctx.stroke();
+
+    // ── WINDSCREEN ─────────────────────────────────────────────────
+    // Tall narrow racing screen — very aggressive rake
+    glow(W2(.55),2,10);
+    ctx.beginPath();
+    ctx.moveTo(90,-30);
+    ctx.bezierCurveTo(96,-52,98,-70,88,-86);
+    ctx.bezierCurveTo(78,-84,70,-68,74,-48);
+    ctx.bezierCurveTo(78,-38,86,-32,90,-30);
+    ctx.closePath();ctx.stroke();
+    // screen centre ridge
+    glow(W2(.22),1,5);
+    ctx.beginPath();ctx.moveTo(90,-34);ctx.bezierCurveTo(94,-56,96,-72,88,-86);ctx.stroke();
+
+    // ── FRONT FORK — USD inverted ──────────────────────────────────
+    // Inner (main stanchion)
+    glow(R(.9),4,18);
+    ctx.beginPath();ctx.moveTo(88,-30);ctx.lineTo(124,62);ctx.stroke();
+    // Outer tube
+    glow(R(.65),2.5,10);
+    ctx.beginPath();ctx.moveTo(96,-22);ctx.lineTo(130,55);ctx.stroke();
+    // Fork brace
+    glow(R(.5),2,8);
+    ctx.beginPath();ctx.moveTo(94,-2);ctx.lineTo(125,18);ctx.stroke();
+    // Lower leg
+    glow(R(.7),3,12);
+    ctx.beginPath();ctx.moveTo(112,25);ctx.lineTo(126,60);ctx.stroke();
+
+    // ── CLIP-ON HANDLEBARS ─────────────────────────────────────────
+    glow(R(.75),2.5,10);
+    ctx.beginPath();ctx.moveTo(72,-44);ctx.lineTo(86,-40);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(86,-40);ctx.lineTo(80,-30);ctx.stroke();
+    // throttle/grip cylinder
+    glow(R(.6),2,8);
+    ctx.beginPath();ctx.ellipse(80,-30,10,4,-.4,0,Math.PI*2);ctx.stroke();
+
+    // ── RIDER SEAT ─────────────────────────────────────────────────
+    glow(R(.85),3,14);
+    ctx.beginPath();
+    ctx.moveTo(-30,-24);
+    ctx.bezierCurveTo(-42,-40,-72,-46,-105,-32);
+    ctx.bezierCurveTo(-110,-27,-108,-18,-103,-16);
+    ctx.bezierCurveTo(-72,-24,-42,-22,-30,-24);
+    ctx.closePath();ctx.stroke();
+    // seat seam highlight
+    glow(R(1),1.5,14);
+    ctx.beginPath();ctx.moveTo(-36,-34);ctx.bezierCurveTo(-60,-44,-88,-40,-105,-28);ctx.stroke();
+
+    // ── TAIL FAIRING ───────────────────────────────────────────────
+    glow(R(.9),3,14);
+    ctx.beginPath();
+    ctx.moveTo(-103,-16);
+    ctx.bezierCurveTo(-118,-8,-130,2,-126,16);
+    ctx.bezierCurveTo(-120,26,-105,22,-94,14);
+    ctx.bezierCurveTo(-78,4,-74,-8,-86,-20);
+    ctx.closePath();ctx.stroke();
+    // tail sharp crease
+    glow(R(1),1.5,16);
+    ctx.beginPath();ctx.moveTo(-104,-16);ctx.bezierCurveTo(-118,-5,-128,8,-125,18);ctx.stroke();
+    // tail light strip (LED bar)
+    glow(R(1),3,22);
+    ctx.beginPath();ctx.moveTo(-122,10);ctx.lineTo(-114,20);ctx.stroke();
+    // pillion seat hump
+    glow(R(.7),2,8);
+    ctx.beginPath();
+    ctx.moveTo(-86,-20);ctx.bezierCurveTo(-92,-28,-96,-30,-100,-26);ctx.stroke();
+
+    // ── EXHAUST SYSTEM ─────────────────────────────────────────────
+    // 4-2-1 header collector at mid-left
+    glow(R(.55),3,10);
+    ctx.beginPath();
+    ctx.moveTo(12,40);
+    ctx.bezierCurveTo(-18,56,-55,65,-92,65);
+    ctx.bezierCurveTo(-102,65,-112,60,-118,52);
+    ctx.stroke();
+    // silencer can
+    glow(R(.7),4,12);
+    ctx.beginPath();ctx.ellipse(-118,52,14,6,-.25,0,Math.PI*2);ctx.stroke();
+    // exhaust tip glow
+    glow(R(.9),2,20);
+    ctx.beginPath();ctx.ellipse(-130,52,5,3,-.25,0,Math.PI*2);ctx.stroke();
+    // heat wrap
+    glow(R(.3),1,3);
+    for(let xp=-55;xp>-105;xp-=8){
+      ctx.beginPath();ctx.moveTo(xp,58);ctx.lineTo(xp+3,66);ctx.stroke();
+    }
+    // secondary header (twin exit hint)
+    glow(R(.4),2,6);
+    ctx.beginPath();ctx.moveTo(8,38);ctx.bezierCurveTo(-15,50,-45,60,-85,62);ctx.stroke();
+
+    // ── CHAIN / SPROCKET ───────────────────────────────────────────
+    glow(R(.38),1.5,5);
+    ctx.beginPath();ctx.moveTo(-22,44);ctx.lineTo(-102,66);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(-22,52);ctx.lineTo(-102,74);ctx.stroke();
+    // sprocket
+    glow(R(.5),2,7);
+    ctx.beginPath();ctx.arc(-120,66,16,0,Math.PI*2);ctx.stroke();
+    // front sprocket
+    ctx.beginPath();ctx.arc(-22,48,10,0,Math.PI*2);ctx.stroke();
+
+    // ── AMBIENT GLOW HALO ──────────────────────────────────────────
+    ctx.save();
+    ctx.shadowBlur=70*alpha;ctx.shadowColor=`rgba(255,0,51,${alpha*.35})`;
+    ctx.strokeStyle='transparent';ctx.lineWidth=0;
+    ctx.beginPath();ctx.ellipse(0,30,200,95,0,0,Math.PI*2);ctx.stroke();
+    ctx.restore();
+
     ctx.restore();
   }
 
@@ -917,7 +1188,11 @@ const DURS=[0,7000,6500,9000,8500,8000,7500,8000,7500,7000];
 const nd=document.getElementById('ndots');
 SLIDES.forEach((_,i)=>{
   const d=document.createElement('div');d.className='dot'+(i===0?' on':'');
-  d.addEventListener('click',()=>{if(presenting||i>0)goTo(i)});nd.appendChild(d);
+  d.addEventListener('click',()=>{
+    if(i===0){ restartIntro(); }
+    else if(presenting){ goTo(i); }
+  });
+  nd.appendChild(d);
 });
 
 function updUI(i){
@@ -952,6 +1227,21 @@ function beginPresentation(){
   goTo(1);
 }
 window.beginPresentation=beginPresentation;
+
+// Restart intro from scratch (triggered by pressing '1')
+function restartIntro(){
+  clearTimeout(stimer);
+  // Hide all slides, show intro
+  SLIDES.forEach(s=>s.classList.remove('on','ain'));
+  document.getElementById('introSlide').classList.add('on');
+  document.getElementById('introLogo').style.opacity='0';
+  presenting=false;
+  current=0;
+  updUI(0);
+  document.getElementById('pbar').style.width='0%';
+  // Signal the intro canvas to restart
+  window._introRestart=true;
+}
 
 // ═══════════════════════════════════════════════════════
 // INPUT — SCROLL, KEYS, TOUCH, CLICK
@@ -993,6 +1283,16 @@ window.addEventListener('keydown',e=>{
       e.preventDefault();
       if(presenting)goTo(current+1);
       else beginPresentation();
+      break;
+    case '1':
+      // '1' restarts the cinematic intro from the very beginning
+      e.preventDefault();
+      restartIntro();
+      break;
+    case '2':case '3':case '4':case '5':case '6':case '7':case '8':case '9':
+      e.preventDefault();
+      {const idx=parseInt(e.key);
+      if(idx<=TOTAL-1){presenting=true;goTo(idx)}}
       break;
   }
 });
