@@ -3,854 +3,763 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AUTONIX — Project Exhibition</title>
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<title>AUTONIX — Project Exhibition 2025</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;900&family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
-  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --r:#ff0033;--r2:#cc0028;--r3:#ff3355;
+  --glow:rgba(255,0,51,.5);--glow2:rgba(255,0,51,.25);
+  --bg:#040404;--bg2:#080808;
+  --w:#ffffff;--g:#999;--d:#444;
+  --bd:rgba(255,0,51,.28);
+  --cyan:#00e5ff;--cyan2:rgba(0,229,255,.3);
+}
+html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--w);font-family:'Rajdhani',sans-serif;cursor:none}
 
-  :root {
-    --red: #ff0033;
-    --red2: #cc0028;
-    --bg: #050505;
-    --bg2: #0a0a0a;
-    --glow: rgba(255,0,51,0.55);
-    --glow2: rgba(255,0,51,0.25);
-    --border: rgba(255,0,51,0.3);
-    --white: #ffffff;
-    --gray: #aaaaaa;
-    --dim: #555;
-  }
+/* PERSISTENT GLOBAL BG */
+#gbg{position:fixed;inset:0;z-index:0;pointer-events:none}
+.gbg-grid{position:absolute;inset:0;background:linear-gradient(90deg,transparent 49%,var(--bd) 50%,transparent 51%) 0 0/44px 44px,linear-gradient(0deg,transparent 49%,var(--bd) 50%,transparent 51%) 0 0/44px 44px;opacity:.07;animation:gdrift 22s linear infinite}
+@keyframes gdrift{to{transform:translate(44px,44px)}}
+.gbg-vig{position:absolute;inset:0;background:radial-gradient(ellipse at center,transparent 30%,rgba(0,0,0,.88) 100%)}
+.gbg-scan{position:absolute;top:0;left:0;width:100%;height:4px;background:linear-gradient(90deg,transparent,var(--r),transparent);box-shadow:0 0 20px var(--glow);animation:sc 3.8s linear infinite}
+@keyframes sc{0%{transform:translateY(-4px);opacity:0}5%{opacity:1}95%{opacity:1}100%{transform:translateY(100vh);opacity:0}}
 
-  html, body {
-    width: 100%; height: 100%;
-    overflow: hidden;
-    background: var(--bg);
-    color: var(--white);
-    font-family: 'Rajdhani', sans-serif;
-    cursor: none;
-  }
+/* CORNER BRACKETS */
+.crn{position:fixed;width:70px;height:70px;z-index:9999;pointer-events:none}
+.crn::before,.crn::after{content:'';position:absolute;background:var(--r)}
+.crn::before{width:100%;height:2px}.crn::after{width:2px;height:100%}
+.crn.tl{top:0;left:0}.crn.tr{top:0;right:0;transform:scaleX(-1)}
+.crn.bl{bottom:0;left:0;transform:scaleY(-1)}.crn.br{bottom:0;right:0;transform:scale(-1)}
 
-  /* ── GLOBAL BG ── */
-  #bg-grid {
-    position: fixed; inset: 0; z-index: 0; pointer-events: none;
-    background:
-      linear-gradient(90deg, transparent 49%, var(--border) 50%, transparent 51%) 0 0 / 44px 44px,
-      linear-gradient(0deg,  transparent 49%, var(--border) 50%, transparent 51%) 0 0 / 44px 44px;
-    opacity: .08;
-    animation: gridDrift 25s linear infinite;
-  }
-  @keyframes gridDrift { to { transform: translate(44px, 44px); } }
+/* PROGRESS + COUNTER */
+#pbar{position:fixed;bottom:0;left:0;height:3px;z-index:9999;background:linear-gradient(90deg,var(--r2),var(--r),#ff6688);box-shadow:0 0 12px var(--glow);width:0%}
+#ctr{position:fixed;bottom:14px;right:28px;z-index:9999;font-family:'Orbitron',sans-serif;font-size:.68rem;letter-spacing:3px;color:var(--d)}
 
-  /* scanline */
-  #scanline {
-    position: fixed; top:0; left:0; width:100%; height:3px; z-index:9998; pointer-events:none;
-    background: linear-gradient(90deg, transparent, var(--red), transparent);
-    box-shadow: 0 0 18px var(--glow);
-    animation: scan 3.5s linear infinite;
-  }
-  @keyframes scan {
-    0%  { transform:translateY(0);   opacity:0; }
-    10% { opacity:1; }
-    90% { opacity:1; }
-    100%{ transform:translateY(100vh); opacity:0; }
-  }
+/* NAV DOTS */
+#ndots{position:fixed;right:18px;top:50%;transform:translateY(-50%);z-index:9999;display:flex;flex-direction:column;gap:9px}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--d);border:1px solid var(--bd);transition:all .3s;cursor:pointer}
+.dot.on{background:var(--r);box-shadow:0 0 10px var(--glow);transform:scale(1.5)}
 
-  /* corner deco */
-  .corner { position:fixed; width:60px; height:60px; z-index:9999; pointer-events:none; }
-  .corner::before, .corner::after { content:''; position:absolute; background:var(--red); }
-  .corner::before { width:100%; height:2px; }
-  .corner::after  { width:2px; height:100%; }
-  .corner.tl { top:0; left:0; }
-  .corner.tr { top:0; right:0; transform:scaleX(-1); }
-  .corner.bl { bottom:0; left:0; transform:scaleY(-1); }
-  .corner.br { bottom:0; right:0; transform:scale(-1); }
+/* CURSOR */
+#cur{position:fixed;width:18px;height:18px;border-radius:50%;border:2px solid var(--r);pointer-events:none;z-index:99999;transform:translate(-50%,-50%);box-shadow:0 0 10px var(--glow)}
+#cur2{position:fixed;width:5px;height:5px;border-radius:50%;background:var(--r);pointer-events:none;z-index:99999;transform:translate(-50%,-50%)}
 
-  /* progress bar */
-  #progress-bar {
-    position: fixed; bottom:0; left:0; height:3px; z-index:9999;
-    background: linear-gradient(90deg, var(--red2), var(--red), #ff6688);
-    box-shadow: 0 0 12px var(--glow);
-    width: 0%;
-    transition: width linear;
-  }
+/* SLIDE ENGINE */
+#stage{position:fixed;inset:0;z-index:10}
+.sl{position:absolute;inset:0;opacity:0;pointer-events:none;display:flex;align-items:center;justify-content:center}
+.sl.on{opacity:1;pointer-events:auto}
 
-  /* slide counter */
-  #slide-counter {
-    position: fixed; bottom: 18px; right: 28px; z-index:9999;
-    font-family:'Orbitron',sans-serif; font-size:.75rem; letter-spacing:2px;
-    color: var(--border); opacity:.7;
-  }
+/* GLITCH FLASH */
+.gfl{position:fixed;inset:0;z-index:9997;pointer-events:none;background:var(--r);opacity:0;animation:gfl .38s ease forwards}
+@keyframes gfl{0%{opacity:.18}20%{opacity:0}50%{opacity:.07}100%{opacity:0}}
 
-  /* ── SLIDES ── */
-  #stage {
-    position: fixed; inset: 0; z-index: 10;
-  }
+/* ANIMATION-IN */
+.ain>*{animation:ain .65s cubic-bezier(.23,1,.32,1) both}
+.ain>*:nth-child(2){animation-delay:.12s}
+.ain>*:nth-child(3){animation-delay:.22s}
+.ain>*:nth-child(4){animation-delay:.33s}
+@keyframes ain{from{opacity:0;transform:translateY(34px)}to{opacity:1;transform:translateY(0)}}
 
-  .slide {
-    position: absolute; inset:0;
-    display: flex; align-items: center; justify-content: center;
-    opacity: 0; pointer-events:none;
-    transition: opacity .05s;
-  }
-  .slide.active { opacity:1; pointer-events:auto; }
+/* ═══════════════════════════════════
+   INTRO SUB-SCENES
+═══════════════════════════════════ */
+.iscene{position:absolute;inset:0;opacity:0;transition:opacity .55s}
+.iscene.vis{opacity:1}
 
-  /* ══════════════════════════════════
-     SLIDE 1 — LOGO REVEAL
-  ══════════════════════════════════ */
-  .s1-wrap {
-    display: flex; flex-direction:column; align-items:center; justify-content:center;
-    gap: 2rem; text-align:center; position:relative;
-  }
-  .s1-ring {
-    position:relative; width:220px; height:220px;
-    display:flex; align-items:center; justify-content:center;
-  }
-  .s1-ring::before {
-    content:''; position:absolute; inset:0;
-    border:2px solid var(--border);
-    border-radius:50%;
-    animation: ringPulse 2s ease-in-out infinite;
-  }
-  .s1-ring::after {
-    content:''; position:absolute; inset:-18px;
-    border:1px solid rgba(255,0,51,.15);
-    border-radius:50%;
-    animation: ringPulse 2s ease-in-out infinite .5s;
-  }
-  @keyframes ringPulse {
-    0%,100%{ transform:scale(1); opacity:.4; }
-    50%    { transform:scale(1.06); opacity:.9; }
-  }
-  .s1-icon {
-    font-size:5rem; color:var(--red);
-    filter: drop-shadow(0 0 20px var(--glow));
-    animation: iconBeat 2s ease-in-out infinite;
-  }
-  @keyframes iconBeat {
-    0%,100%{ transform:scale(1);    filter:drop-shadow(0 0 20px var(--glow)); }
-    50%    { transform:scale(1.12); filter:drop-shadow(0 0 40px var(--red)); }
-  }
-  .s1-title {
-    font-family:'Orbitron',sans-serif; font-size:clamp(3.5rem,8vw,7rem); font-weight:900;
-    letter-spacing:10px;
-    background: linear-gradient(135deg,#ff0033,#ff3366,#ff0033);
-    background-size:200%; -webkit-background-clip:text; -webkit-text-fill-color:transparent;
-    animation: gradShift 3s ease infinite;
-  }
-  @keyframes gradShift {
-    0%,100%{ background-position:0% center; }
-    50%    { background-position:100% center; }
-  }
-  .s1-sub {
-    font-family:'Orbitron',sans-serif; font-size:clamp(.8rem,2vw,1.1rem);
-    letter-spacing:6px; color:var(--gray); text-transform:uppercase;
-    opacity:0; animation: fadeSlideUp .8s ease .6s forwards;
-  }
-  .s1-tagline {
-    font-size:clamp(1rem,2.5vw,1.4rem); color:var(--gray); letter-spacing:2px;
-    opacity:0; animation: fadeSlideUp .8s ease 1s forwards;
-  }
-  .s1-tagline span { color:var(--red); font-weight:700; }
-  @keyframes fadeSlideUp {
-    from{ opacity:0; transform:translateY(20px); }
-    to  { opacity:1; transform:translateY(0); }
-  }
+/* SCENE A — Speed streaks */
+#scA{background:#000;overflow:hidden}
+.streak{position:absolute;height:1px;background:linear-gradient(90deg,transparent,var(--r),transparent);animation:stk linear infinite}
+@keyframes stk{0%{transform:translateX(-120%);opacity:0}10%{opacity:1}90%{opacity:1}100%{transform:translateX(220vw);opacity:0}}
+#scA-txt{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+#scA-code{font-family:'Share Tech Mono',monospace;font-size:clamp(.5rem,1.2vw,.82rem);color:rgba(255,0,51,.2);text-align:center;line-height:2.2;max-width:80vw;word-break:break-all;animation:codeFade 2.8s ease forwards}
+@keyframes codeFade{0%{opacity:0}20%{opacity:1}80%{opacity:1}100%{opacity:.3}}
 
-  /* typing cursor effect for slide 1 */
-  .s1-type { border-right:3px solid var(--red); animation:blink .8s step-end infinite; }
-  @keyframes blink { 50%{ border-color:transparent; } }
+/* SCENE B — SVG circuit */
+#scB{background:#000;overflow:hidden}
+.cir-svg{position:absolute;inset:0;width:100%;height:100%}
 
-  /* orbit dots */
-  .orbit {
-    position:absolute; inset:-50px;
-    animation: orbitSpin 8s linear infinite;
-    border-radius:50%;
-  }
-  .orbit-dot {
-    position:absolute; width:8px; height:8px;
-    background:var(--red); border-radius:50%;
-    box-shadow:0 0 12px var(--glow);
-    top:50%; left:0; transform:translateY(-50%);
-  }
-  @keyframes orbitSpin { to{ transform:rotate(360deg); } }
-  .orbit2 { animation-duration:12s; animation-direction:reverse; inset:-80px; }
-  .orbit2 .orbit-dot { background:#fff; box-shadow:0 0 8px rgba(255,255,255,.5); }
+/* SCENE C — Eye reveal */
+#scC{background:#000;display:flex;align-items:center;justify-content:center}
 
-  /* ══════════════════════════════════
-     SLIDE 2 — PROBLEM STATEMENT
-  ══════════════════════════════════ */
-  .s2-wrap {
-    max-width:1200px; width:100%; padding:3rem;
-    display:grid; grid-template-columns:1fr 1fr; gap:4rem; align-items:center;
-  }
-  .slide-badge {
-    display:inline-block; padding:.4rem 1.2rem;
-    background:rgba(255,0,51,.1); border:1px solid var(--border);
-    border-radius:30px; font-family:'Orbitron',sans-serif;
-    font-size:.75rem; letter-spacing:2px; color:var(--red);
-    margin-bottom:1.5rem;
-  }
-  .slide-title {
-    font-family:'Orbitron',sans-serif;
-    font-size:clamp(1.8rem,4vw,3rem); font-weight:700; letter-spacing:3px;
-    line-height:1.2; margin-bottom:1.5rem;
-  }
-  .slide-title .hl { color:var(--red); }
-  .slide-body { font-size:clamp(.95rem,1.8vw,1.15rem); color:var(--gray); line-height:1.9; }
+/* SCENE D — Binary data rain */
+#scD{background:#000;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.drain{position:absolute;top:0;font-family:'Share Tech Mono',monospace;font-size:.82rem;color:rgba(255,0,51,.45);animation:dfall linear infinite;writing-mode:vertical-rl}
+@keyframes dfall{from{transform:translateY(-100%)}to{transform:translateY(110vh)}}
+#scD-over{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.5rem;z-index:2}
+.scD-big{font-family:'Orbitron',sans-serif;font-size:clamp(2.2rem,5.5vw,5rem);font-weight:900;letter-spacing:8px;color:rgba(255,0,51,.7);text-align:center;animation:bigpulse 1.5s ease-in-out infinite}
+@keyframes bigpulse{0%,100%{text-shadow:0 0 40px var(--glow)}50%{text-shadow:0 0 80px var(--r),0 0 120px rgba(255,0,51,.4)}}
+.scD-mono{font-family:'Share Tech Mono',monospace;font-size:.88rem;color:rgba(255,255,255,.28);letter-spacing:4px}
+#lbar-track{width:280px;height:3px;background:rgba(255,0,51,.15);border-radius:3px;overflow:hidden}
+#lbar-fill{height:100%;width:0;background:linear-gradient(90deg,#cc0028,#ff0033);border-radius:3px;box-shadow:0 0 12px var(--glow);transition:width .1s linear}
 
-  .stat-grid { display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; }
-  .stat-box {
-    padding:1.8rem 1.5rem; text-align:center;
-    background:rgba(255,0,51,.05); border:1px solid var(--border);
-    border-radius:12px; position:relative; overflow:hidden;
-    clip-path:polygon(0 0,calc(100% - 15px) 0,100% 15px,100% 100%,15px 100%,0 calc(100% - 15px));
-    transition:all .3s;
-  }
-  .stat-box::after {
-    content:''; position:absolute; bottom:0; left:0; width:100%; height:2px;
-    background:var(--red); transform:scaleX(0); transform-origin:left;
-    animation:statAnim 2s ease-in-out infinite;
-  }
-  @keyframes statAnim { 0%,100%{ transform:scaleX(0); } 50%{ transform:scaleX(1); } }
-  .stat-num {
-    font-family:'Orbitron',sans-serif; font-size:2.5rem; font-weight:700;
-    color:var(--red); display:block; margin-bottom:.4rem;
-  }
-  .stat-lbl { font-size:.85rem; color:var(--gray); letter-spacing:1px; text-transform:uppercase; }
+/* LOGO REVEAL SCENE */
+#scLOGO{background:#000}
+.lr-bg{position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(255,0,51,.13) 0%,#000 65%)}
+.lr-lines{position:absolute;inset:0;overflow:hidden}
+.lrl{position:absolute;top:50%;left:50%;height:1px;background:linear-gradient(90deg,var(--r),transparent);transform-origin:left center;animation:lrex 2s ease forwards;opacity:0}
+@keyframes lrex{0%{width:0;opacity:0}30%{opacity:1}100%{width:55vw;opacity:.6}}
 
-  /* ══════════════════════════════════
-     SLIDE 3 — SOLUTION / WHAT IS AUTONIX
-  ══════════════════════════════════ */
-  .s3-wrap {
-    max-width:1200px; width:100%; padding:3rem; text-align:center;
-  }
-  .feature-pills {
-    display:flex; flex-wrap:wrap; gap:1.2rem; justify-content:center; margin-top:3rem;
-  }
-  .pill {
-    display:flex; align-items:center; gap:.8rem;
-    padding:1rem 2rem;
-    background:rgba(255,0,51,.07); border:1px solid var(--border);
-    border-radius:50px; font-family:'Orbitron',sans-serif; font-size:.85rem; letter-spacing:1px;
-    transition:all .3s;
-    animation:pillFloat 3s ease-in-out infinite;
-  }
-  .pill:nth-child(2){ animation-delay:.4s; }
-  .pill:nth-child(3){ animation-delay:.8s; }
-  .pill:nth-child(4){ animation-delay:1.2s; }
-  .pill:nth-child(5){ animation-delay:1.6s; }
-  @keyframes pillFloat {
-    0%,100%{ transform:translateY(0); }
-    50%    { transform:translateY(-8px); }
-  }
-  .pill i { color:var(--red); font-size:1.2rem; }
+.lr-center{position:relative;display:flex;flex-direction:column;align-items:center;gap:2.2rem;z-index:2}
+.lr-rings{position:relative;width:260px;height:260px;display:flex;align-items:center;justify-content:center}
+.lr-r1{position:absolute;inset:0;border-radius:50%;border:1px solid rgba(255,0,51,.3);animation:rspin 6s linear infinite}
+.lr-r2{position:absolute;inset:22px;border-radius:50%;border:1px dashed rgba(255,0,51,.2);animation:rspin 10s linear infinite reverse}
+.lr-r3{position:absolute;inset:44px;border-radius:50%;border:2px solid rgba(255,0,51,.55);animation:rspin 4s linear infinite;box-shadow:0 0 22px var(--glow),inset 0 0 22px rgba(255,0,51,.1)}
+@keyframes rspin{to{transform:rotate(360deg)}}
+.lr-r1::before{content:'';position:absolute;top:50%;left:-5px;width:10px;height:10px;background:var(--r);border-radius:50%;transform:translateY(-50%);box-shadow:0 0 14px var(--glow)}
+.lr-r3::before{content:'';position:absolute;top:-5px;left:50%;width:10px;height:10px;background:var(--r);border-radius:50%;transform:translateX(-50%);box-shadow:0 0 14px var(--glow)}
+.lr-shield{position:relative;z-index:2;display:flex;align-items:center;justify-content:center}
+.lr-shield i{font-size:5.5rem;color:var(--r);filter:drop-shadow(0 0 28px var(--glow)) drop-shadow(0 0 70px rgba(255,0,51,.3));animation:sbeat 2s ease-in-out infinite}
+@keyframes sbeat{0%,100%{transform:scale(1)}50%{transform:scale(1.12);filter:drop-shadow(0 0 55px var(--r)) drop-shadow(0 0 110px rgba(255,0,51,.5))}}
+.lr-particle{position:absolute;width:5px;height:5px;background:var(--r);border-radius:50%;box-shadow:0 0 10px var(--glow);animation:porbit linear infinite}
+@keyframes porbit{from{transform:rotate(var(--ps)) translateX(var(--pr)) rotate(calc(-1*var(--ps)))}to{transform:rotate(calc(var(--ps) + 360deg)) translateX(var(--pr)) rotate(calc(-1*var(--ps) - 360deg))}}
 
-  /* ══════════════════════════════════
-     SLIDE 4 — DROWSINESS DETECTION
-  ══════════════════════════════════ */
-  .s4-wrap {
-    max-width:1300px; width:100%; padding:3rem;
-    display:grid; grid-template-columns:1.2fr 1fr; gap:5rem; align-items:center;
-  }
-  .tech-list { list-style:none; margin-top:1.5rem; display:flex; flex-direction:column; gap:.9rem; }
-  .tech-list li {
-    display:flex; align-items:flex-start; gap:1rem;
-    padding:1rem 1.2rem;
-    background:rgba(255,0,51,.05); border-left:3px solid var(--red);
-    border-radius:0 8px 8px 0; font-size:1rem; color:var(--gray);
-    transition:all .3s;
-  }
-  .tech-list li i { color:var(--red); margin-top:3px; flex-shrink:0; }
-  .tech-list li strong { color:var(--white); }
+.lr-tw{text-align:center;position:relative}
+.lr-title{font-family:'Orbitron',sans-serif;font-size:clamp(4.5rem,12vw,10rem);font-weight:900;letter-spacing:clamp(8px,2.5vw,22px);line-height:1;background:linear-gradient(135deg,#fff 20%,var(--r) 50%,#fff 80%);background-size:200%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:tshine 3.5s linear infinite}
+@keyframes tshine{0%,100%{background-position:100% center}50%{background-position:0% center}}
+.lr-tu{position:absolute;bottom:-8px;left:50%;transform:translateX(-50%);width:0;height:2px;background:linear-gradient(90deg,transparent,var(--r),transparent);box-shadow:0 0 15px var(--glow);animation:tuex 1.5s ease .9s forwards}
+@keyframes tuex{from{width:0}to{width:100%}}
+.lr-sub{font-family:'Orbitron',sans-serif;font-size:clamp(.65rem,1.4vw,.9rem);letter-spacing:4px;color:var(--g);text-transform:uppercase;opacity:0;animation:fup .8s ease 1.3s forwards}
+.lr-tag{font-size:clamp(.9rem,2vw,1.25rem);color:var(--g);letter-spacing:2px;opacity:0;animation:fup .8s ease 1.8s forwards}
+.lr-tag span{color:var(--r);font-weight:700}
+@keyframes fup{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
 
-  /* EAR diagram */
-  .ear-diagram {
-    position:relative; display:flex; flex-direction:column;
-    align-items:center; justify-content:center; gap:1.5rem;
-  }
-  .eye-svg-wrap {
-    width:280px; height:140px;
-    background:rgba(255,0,51,.05); border:1px solid var(--border);
-    border-radius:15px; display:flex; align-items:center; justify-content:center;
-    position:relative; overflow:hidden;
-  }
-  .eye-svg-wrap::before {
-    content:''; position:absolute; top:0; left:0; width:100%; height:3px;
-    background:linear-gradient(90deg,transparent,var(--red),transparent);
-    animation:scanLine2 2s linear infinite;
-  }
-  @keyframes scanLine2 { from{transform:translateY(0)} to{transform:translateY(140px)} }
+/* ═══════════════════════════════════
+   SLIDE CONTENT STYLES
+═══════════════════════════════════ */
+.sw{max-width:1280px;width:100%;padding:2rem 3rem}
 
-  .ear-meter {
-    width:280px; background:rgba(255,0,51,.08); border:1px solid var(--border); border-radius:8px;
-    padding:1rem 1.5rem;
-  }
-  .ear-label {
-    font-family:'Orbitron',sans-serif; font-size:.8rem; letter-spacing:2px;
-    color:var(--red); margin-bottom:.7rem;
-  }
-  .ear-bar-track { height:10px; background:rgba(255,0,51,.15); border-radius:5px; overflow:hidden; }
-  .ear-bar-fill {
-    height:100%; width:72%; background:linear-gradient(90deg,var(--red2),var(--red));
-    border-radius:5px; animation:earAnim 3s ease-in-out infinite;
-    box-shadow:0 0 10px var(--glow);
-  }
-  @keyframes earAnim {
-    0%  { width:72%; }
-    30% { width:72%; }
-    45% { width:18%; } /* drowsy dip */
-    55% { width:18%; }
-    70% { width:72%; }
-    100%{ width:72%; }
-  }
-  .ear-status {
-    font-family:'Orbitron',sans-serif; font-size:.75rem; letter-spacing:2px;
-    margin-top:.5rem; text-align:right; color:var(--green, #22c55e);
-    animation:statusSwitch 3s ease-in-out infinite;
-  }
-  @keyframes statusSwitch {
-    0%,30%,70%,100% { color:#22c55e; content:'ALERT'; }
-    45%,55%         { color:var(--red); }
-  }
+/* BADGES */
+.sb{display:inline-flex;align-items:center;gap:.5rem;padding:.38rem 1.1rem;background:rgba(255,0,51,.1);border:1px solid var(--bd);border-radius:30px;font-family:'Orbitron',sans-serif;font-size:.7rem;letter-spacing:2px;color:var(--r);margin-bottom:1.4rem}
 
-  /* ══════════════════════════════════
-     SLIDE 5 — CRASH DETECTION
-  ══════════════════════════════════ */
-  .s5-wrap {
-    max-width:1300px; width:100%; padding:3rem;
-    display:grid; grid-template-columns:1fr 1.2fr; gap:5rem; align-items:center;
-  }
-  /* impact animation */
-  .crash-visual {
-    display:flex; flex-direction:column; align-items:center; gap:2rem;
-  }
-  .impact-ring {
-    position:relative; width:200px; height:200px;
-    display:flex; align-items:center; justify-content:center;
-  }
-  .impact-ring::before, .impact-ring::after {
-    content:''; position:absolute; inset:0;
-    border-radius:50%; border:2px solid var(--red);
-    animation:impactWave 2s ease-out infinite;
-  }
-  .impact-ring::after { animation-delay:.7s; }
-  @keyframes impactWave {
-    0%  { transform:scale(.5); opacity:.9; }
-    100%{ transform:scale(1.6); opacity:0; }
-  }
-  .impact-icon { font-size:4.5rem; color:var(--red); z-index:2;
-    filter:drop-shadow(0 0 20px var(--glow));
-    animation:impactShake .5s ease-in-out infinite;
-  }
-  @keyframes impactShake {
-    0%,100%{ transform:translate(0,0) rotate(0deg); }
-    20%    { transform:translate(-3px,2px) rotate(-2deg); }
-    40%    { transform:translate(3px,-2px) rotate(2deg); }
-    60%    { transform:translate(-2px,3px) rotate(-1deg); }
-    80%    { transform:translate(2px,-3px) rotate(1deg); }
-  }
-  .countdown-demo {
-    width:280px; padding:1.5rem;
-    background:rgba(255,0,51,.08); border:2px solid var(--red);
-    border-radius:12px; text-align:center;
-    clip-path:polygon(0 0,calc(100% - 12px) 0,100% 12px,100% 100%,12px 100%,0 calc(100% - 12px));
-  }
-  .countdown-label {
-    font-family:'Orbitron',sans-serif; font-size:.75rem; letter-spacing:2px; color:var(--red); margin-bottom:.5rem;
-  }
-  .countdown-num {
-    font-family:'Orbitron',sans-serif; font-size:3.5rem; font-weight:700; color:var(--white);
-    animation:countDown 30s linear infinite;
-  }
-  @keyframes countDown {
-    0%  { opacity:1; } /* just pulse, no actual countdown — decorative */
-    50% { opacity:.5; }
-    100%{ opacity:1; }
-  }
+/* TITLES */
+.st{font-family:'Orbitron',sans-serif;font-size:clamp(1.7rem,3.5vw,2.9rem);font-weight:700;letter-spacing:3px;line-height:1.2;margin-bottom:1.1rem}
+.st .hl{color:var(--r)}
+.sb2{font-size:clamp(.9rem,1.6vw,1.08rem);color:var(--g);line-height:1.9}
 
-  /* ══════════════════════════════════
-     SLIDE 6 — TECH STACK
-  ══════════════════════════════════ */
-  .s6-wrap {
-    max-width:1100px; width:100%; padding:3rem; text-align:center;
-  }
-  .tech-hex-grid {
-    display:flex; flex-wrap:wrap; justify-content:center; gap:2rem; margin-top:3rem;
-  }
-  .hex-item {
-    width:160px; display:flex; flex-direction:column; align-items:center; gap:.8rem;
-    padding:2rem 1.2rem;
-    background:rgba(255,0,51,.06); border:1px solid var(--border); border-radius:16px;
-    clip-path:polygon(20% 0%,80% 0%,100% 20%,100% 80%,80% 100%,20% 100%,0% 80%,0% 20%);
-    transition:all .3s;
-    animation:hexFloat 4s ease-in-out infinite;
-  }
-  .hex-item:nth-child(2){ animation-delay:.5s; }
-  .hex-item:nth-child(3){ animation-delay:1s; }
-  .hex-item:nth-child(4){ animation-delay:1.5s; }
-  .hex-item:nth-child(5){ animation-delay:2s; }
-  @keyframes hexFloat {
-    0%,100%{ transform:translateY(0); }
-    50%    { transform:translateY(-12px); box-shadow:0 15px 40px var(--glow2); }
-  }
-  .hex-icon { font-size:2.5rem; color:var(--red); }
-  .hex-name { font-family:'Orbitron',sans-serif; font-size:.8rem; letter-spacing:1px; text-align:center; }
+/* 2-COL GRID */
+.g2{display:grid;gap:4rem;align-items:center}
+.gc12{grid-template-columns:1fr 1fr}
+.gc21{grid-template-columns:1.15fr 1fr}
+.gc12r{grid-template-columns:1fr 1.15fr}
 
-  /* ══════════════════════════════════
-     SLIDE 7 — TEAM / CREDITS
-  ══════════════════════════════════ */
-  .s7-wrap {
-    max-width:1100px; width:100%; padding:3rem; text-align:center;
-  }
-  .team-cards {
-    display:flex; gap:3rem; justify-content:center; margin-top:3rem; flex-wrap:wrap;
-  }
-  .team-card {
-    width:260px; padding:2.5rem 2rem; text-align:center;
-    background:rgba(255,0,51,.07); border:1px solid var(--border); border-radius:20px;
-    position:relative; overflow:hidden;
-    clip-path:polygon(0 0,calc(100% - 20px) 0,100% 20px,100% 100%,20px 100%,0 calc(100% - 20px));
-  }
-  .team-card::before {
-    content:''; position:absolute; bottom:0; left:0; width:100%; height:3px;
-    background:linear-gradient(90deg,transparent,var(--red),transparent);
-    animation:borderGlow 2.5s ease-in-out infinite;
-  }
-  @keyframes borderGlow { 0%,100%{opacity:.3;} 50%{opacity:1;} }
-  .team-avatar {
-    width:80px; height:80px; border-radius:50%; background:rgba(255,0,51,.15);
-    border:2px solid var(--border); display:flex; align-items:center; justify-content:center;
-    margin:0 auto 1.2rem; font-size:2rem; color:var(--red);
-  }
-  .team-name { font-family:'Orbitron',sans-serif; font-size:1rem; letter-spacing:2px; margin-bottom:.4rem; }
-  .team-role { font-size:.9rem; color:var(--gray); }
-  .team-inst { font-size:.8rem; color:var(--dim); margin-top:.4rem; }
+/* STAT BOXES */
+.sg{display:grid;grid-template-columns:1fr 1fr;gap:1.1rem}
+.sbox{padding:1.5rem;text-align:center;background:rgba(255,0,51,.05);border:1px solid var(--bd);border-radius:10px;position:relative;overflow:hidden;clip-path:polygon(0 0,calc(100% - 13px) 0,100% 13px,100% 100%,13px 100%,0 calc(100% - 13px))}
+.sbox::after{content:'';position:absolute;bottom:0;left:0;width:100%;height:2px;background:var(--r);transform:scaleX(0);transform-origin:left;animation:sbl 3s ease-in-out infinite}
+@keyframes sbl{0%,100%{transform:scaleX(0)}50%{transform:scaleX(1)}}
+.snum{font-family:'Orbitron',sans-serif;font-size:2.2rem;font-weight:700;color:var(--r);display:block;margin-bottom:.3rem;filter:drop-shadow(0 0 10px var(--glow))}
+.slbl{font-size:.78rem;color:var(--g);letter-spacing:1px;text-transform:uppercase}
 
-  /* college badge */
-  .college-badge {
-    margin-top:2.5rem; padding:1rem 2.5rem; display:inline-block;
-    background:rgba(255,0,51,.08); border:1px solid var(--border); border-radius:50px;
-    font-family:'Orbitron',sans-serif; font-size:.8rem; letter-spacing:2px; color:var(--gray);
-  }
+/* PILLS */
+.pr{display:flex;flex-wrap:wrap;gap:.9rem;justify-content:center;margin-top:2.2rem}
+.pill{display:flex;align-items:center;gap:.7rem;padding:.85rem 1.6rem;background:rgba(255,0,51,.07);border:1px solid var(--bd);border-radius:50px;font-family:'Orbitron',sans-serif;font-size:.77rem;letter-spacing:1px;transition:all .3s;animation:pfl 3s ease-in-out infinite}
+.pill i{color:var(--r);font-size:1rem}
+.pill:nth-child(2){animation-delay:.3s}.pill:nth-child(3){animation-delay:.6s}.pill:nth-child(4){animation-delay:.9s}.pill:nth-child(5){animation-delay:1.2s}
+@keyframes pfl{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
 
-  /* ══════════════════════════════════
-     SLIDE TRANSITIONS
-  ══════════════════════════════════ */
-  .slide { animation: none; }
+/* TECH LIST */
+.tl{list-style:none;margin-top:1.4rem;display:flex;flex-direction:column;gap:.75rem}
+.tl li{display:flex;align-items:flex-start;gap:.9rem;padding:.85rem 1.1rem;background:rgba(255,0,51,.05);border-left:3px solid var(--r);border-radius:0 8px 8px 0;font-size:.97rem;color:var(--g)}
+.tl li i{color:var(--r);margin-top:3px;flex-shrink:0}.tl li strong{color:var(--w)}
 
-  /* IN animations */
-  .anim-in .s1-wrap,
-  .anim-in .s2-wrap,
-  .anim-in .s3-wrap,
-  .anim-in .s4-wrap,
-  .anim-in .s5-wrap,
-  .anim-in .s6-wrap,
-  .anim-in .s7-wrap {
-    animation: slideIn .7s cubic-bezier(.23,1,.32,1) both;
-  }
-  @keyframes slideIn {
-    from{ opacity:0; transform:translateY(40px); }
-    to  { opacity:1; transform:translateY(0); }
-  }
+/* EAR BOX */
+.ear-box{background:rgba(255,0,51,.06);border:1px solid var(--bd);border-radius:14px;padding:1.8rem;display:flex;flex-direction:column;gap:1.3rem;align-items:center}
+.ear-track{width:100%;height:10px;background:rgba(255,0,51,.15);border-radius:5px;overflow:hidden}
+.ear-fill{height:100%;background:linear-gradient(90deg,var(--r2),var(--r));border-radius:5px;box-shadow:0 0 10px var(--glow);animation:earw 4s ease-in-out infinite}
+@keyframes earw{0%,30%,70%,100%{width:73%}43%,57%{width:15%}}
+.ear-st{font-family:'Orbitron',sans-serif;font-size:.72rem;letter-spacing:2px;text-align:right;animation:ests 4s ease-in-out infinite}
+@keyframes ests{0%,30%,70%,100%{color:#22c55e}38%,62%{color:var(--r)}}
 
-  /* glitch flash on transition */
-  .glitch-flash {
-    position:fixed; inset:0; z-index:9997; pointer-events:none;
-    background:var(--red); opacity:0;
-    animation: glitchFlash .35s ease forwards;
-  }
-  @keyframes glitchFlash {
-    0%  { opacity:.15; }
-    20% { opacity:0; }
-    40% { opacity:.08; }
-    60% { opacity:0; }
-    100%{ opacity:0; }
-  }
+/* SCREENSHOT FRAME */
+.ssf{position:relative;border:1px solid var(--bd);border-radius:13px;overflow:hidden;box-shadow:0 0 35px rgba(255,0,51,.18)}
+.ssf img{display:block;border-radius:12px}
+.ssf .sov{position:absolute;top:0;left:0;width:100%;height:3px;background:linear-gradient(90deg,transparent,var(--r),transparent);animation:sssc 2.5s linear infinite}
+@keyframes sssc{from{transform:translateY(0)}to{transform:translateY(600px)}}
+.fc{position:absolute;width:18px;height:18px;border:2px solid var(--r)}
+.fc.tl{top:-1px;left:-1px;border-right:none;border-bottom:none}
+.fc.tr{top:-1px;right:-1px;border-left:none;border-bottom:none}
+.fc.bl{bottom:-1px;left:-1px;border-right:none;border-top:none}
+.fc.br{bottom:-1px;right:-1px;border-left:none;border-top:none}
 
-  /* nav dots */
-  #nav-dots {
-    position:fixed; right:24px; top:50%; transform:translateY(-50%); z-index:9999;
-    display:flex; flex-direction:column; gap:10px;
-  }
-  .dot {
-    width:8px; height:8px; border-radius:50%;
-    background:var(--dim); border:1px solid var(--border);
-    transition:all .3s; cursor:pointer;
-  }
-  .dot.active {
-    background:var(--red); box-shadow:0 0 10px var(--glow); transform:scale(1.4);
-  }
+/* CRASH */
+.imp-box{display:flex;flex-direction:column;align-items:center;gap:1.8rem}
+.imp-ring{position:relative;width:200px;height:200px;display:flex;align-items:center;justify-content:center}
+.imp-ring::before,.imp-ring::after{content:'';position:absolute;inset:0;border-radius:50%;border:2px solid var(--r);animation:iw 2s ease-out infinite}
+.imp-ring::after{animation-delay:.7s}
+@keyframes iw{0%{transform:scale(.4);opacity:1}100%{transform:scale(2);opacity:0}}
+.imp-ic{font-size:4.5rem;color:var(--r);z-index:2;filter:drop-shadow(0 0 22px var(--glow));animation:shk .45s ease-in-out infinite}
+@keyframes shk{0%,100%{transform:translate(0,0) rotate(0)}25%{transform:translate(-3px,2px) rotate(-2deg)}75%{transform:translate(3px,-2px) rotate(2deg)}}
+.cd-box{width:260px;padding:1.4rem;background:rgba(255,0,51,.1);border:2px solid var(--r);border-radius:12px;text-align:center;clip-path:polygon(0 0,calc(100% - 13px) 0,100% 13px,100% 100%,13px 100%,0 calc(100% - 13px))}
+.cd-lbl{font-family:'Orbitron',sans-serif;font-size:.68rem;letter-spacing:2px;color:var(--r);margin-bottom:.4rem}
+.cd-num{font-family:'Orbitron',sans-serif;font-size:3.8rem;font-weight:700;color:var(--w);line-height:1;filter:drop-shadow(0 0 15px var(--glow))}
+.cd-sub{font-family:'Orbitron',sans-serif;font-size:.62rem;letter-spacing:2px;color:var(--g);margin-top:.2rem}
 
-  /* custom cursor */
-  #cursor {
-    position:fixed; width:16px; height:16px; border-radius:50%;
-    border:2px solid var(--red); pointer-events:none; z-index:99999;
-    transform:translate(-50%,-50%); transition:transform .1s;
-    box-shadow:0 0 10px var(--glow);
-  }
+/* MAP */
+.map-box{position:relative;width:320px;height:300px;background:rgba(0,229,255,.03);border:1px solid rgba(0,229,255,.2);border-radius:14px;overflow:hidden}
+.map-grid{position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,229,255,.05) 1px,transparent 1px) 0 0/28px 28px,linear-gradient(0deg,rgba(0,229,255,.05) 1px,transparent 1px) 0 0/28px 28px}
+.map-car-el{position:absolute;font-size:1.4rem;color:var(--r);filter:drop-shadow(0 0 8px var(--glow));animation:carm 6s ease-in-out infinite}
+@keyframes carm{0%{left:10%;top:72%}25%{left:32%;top:44%}50%{left:60%;top:26%}75%{left:76%;top:52%}100%{left:10%;top:72%}}
+.map-ping{position:absolute;width:28px;height:28px;border-radius:50%;border:2px solid var(--r);animation:ping 2s ease-out infinite;top:26%;left:60%;transform:translate(-50%,-50%)}
+@keyframes ping{0%{transform:translate(-50%,-50%) scale(.5);opacity:1}100%{transform:translate(-50%,-50%) scale(2.2);opacity:0}}
 
-  /* SVG eye */
-  .eye-svg { filter: drop-shadow(0 0 8px var(--glow)); }
+/* HEX GRID */
+.hg{display:flex;flex-wrap:wrap;justify-content:center;gap:1.6rem;margin-top:2.2rem}
+.hc{width:145px;display:flex;flex-direction:column;align-items:center;gap:.65rem;padding:1.7rem 1rem;background:rgba(255,0,51,.06);border:1px solid var(--bd);border-radius:14px;clip-path:polygon(20% 0%,80% 0%,100% 20%,100% 80%,80% 100%,20% 100%,0% 80%,0% 20%);animation:hfl 4s ease-in-out infinite}
+.hc:nth-child(2){animation-delay:.5s}.hc:nth-child(3){animation-delay:1s}.hc:nth-child(4){animation-delay:1.5s}.hc:nth-child(5){animation-delay:2s}
+@keyframes hfl{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px);box-shadow:0 15px 40px rgba(255,0,51,.2)}}
+.hci{font-size:2.2rem;color:var(--r)}.hcn{font-family:'Orbitron',sans-serif;font-size:.72rem;letter-spacing:1px;text-align:center}
 
-  /* responsive quick fixes */
-  @media (max-width:900px){
-    .s2-wrap, .s4-wrap, .s5-wrap { grid-template-columns:1fr; gap:2rem; }
-    .stat-grid { grid-template-columns:1fr 1fr; }
-    .s1-title { font-size:3.5rem; }
-  }
+/* SCREENSHOTS ROW */
+.ss-row{display:flex;gap:1.8rem;justify-content:center;flex-wrap:wrap}
+.ss-item{display:flex;flex-direction:column;align-items:center;gap:.9rem}
+.ss-lbl{font-family:'Orbitron',sans-serif;font-size:.68rem;letter-spacing:2px;color:var(--r)}
+
+/* TEAM */
+.trow{display:flex;gap:2.5rem;justify-content:center;margin-top:2.2rem;flex-wrap:wrap}
+.tcard{width:255px;padding:2.2rem 1.8rem;background:rgba(255,0,51,.07);border:1px solid var(--bd);border-radius:18px;position:relative;overflow:hidden;clip-path:polygon(0 0,calc(100% - 18px) 0,100% 18px,100% 100%,18px 100%,0 calc(100% - 18px));text-align:center}
+.tcard::before{content:'';position:absolute;bottom:0;left:0;width:100%;height:3px;background:linear-gradient(90deg,transparent,var(--r),transparent);animation:tcg 2.5s ease-in-out infinite}
+@keyframes tcg{0%,100%{opacity:.3}50%{opacity:1}}
+.tav{width:78px;height:78px;border-radius:50%;background:rgba(255,0,51,.15);border:2px solid var(--bd);display:flex;align-items:center;justify-content:center;margin:0 auto 1.1rem;font-size:2rem;color:var(--r)}
+.tn{font-family:'Orbitron',sans-serif;font-size:.95rem;letter-spacing:2px;margin-bottom:.3rem}
+.tr2{font-size:.88rem;color:var(--g)}.ti{font-size:.74rem;color:var(--d);margin-top:.3rem}
+.cbadge{margin-top:1.8rem;padding:.8rem 2.2rem;display:inline-block;background:rgba(255,0,51,.08);border:1px solid var(--bd);border-radius:50px;font-family:'Orbitron',sans-serif;font-size:.72rem;letter-spacing:2px;color:var(--g)}
+
+/* ALERT SYSTEM SLIDE */
+.al-row{display:flex;gap:1.2rem;margin-top:1.5rem;flex-wrap:wrap}
+.al-step{flex:1;min-width:160px;padding:1.2rem;background:rgba(255,0,51,.05);border:1px solid var(--bd);border-radius:10px;text-align:center;position:relative}
+.al-step::after{content:attr(data-num);position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--r);color:#fff;font-family:'Orbitron',sans-serif;font-size:.65rem;padding:.15rem .6rem;border-radius:20px}
+.al-icon{font-size:1.8rem;color:var(--r);margin-bottom:.6rem}
+.al-txt{font-family:'Orbitron',sans-serif;font-size:.72rem;letter-spacing:1px;color:var(--g)}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .gc12,.gc21,.gc12r{grid-template-columns:1fr}
+  .sw{padding:1.5rem}
+  .sg{grid-template-columns:1fr 1fr}
+}
 </style>
 </head>
 <body>
 
-<!-- Global BG -->
-<div id="bg-grid"></div>
-<div id="scanline"></div>
-<div class="corner tl"></div>
-<div class="corner tr"></div>
-<div class="corner bl"></div>
-<div class="corner br"></div>
-<div id="progress-bar"></div>
-<div id="slide-counter">01 / 07</div>
-<div id="nav-dots"></div>
-<div id="cursor"></div>
+<div id="gbg"><div class="gbg-grid"></div><div class="gbg-vig"></div><div class="gbg-scan"></div></div>
+<div class="crn tl"></div><div class="crn tr"></div><div class="crn bl"></div><div class="crn br"></div>
+<div id="pbar"></div>
+<div id="ctr">01 / 10</div>
+<div id="ndots"></div>
+<div id="cur"></div><div id="cur2"></div>
 
-<!-- ══ STAGE ══ -->
 <div id="stage">
 
-  <!-- SLIDE 1 — LOGO REVEAL -->
-  <div class="slide active" id="s1">
-    <div class="s1-wrap anim-in">
-      <div class="s1-ring">
-        <div class="orbit"><div class="orbit-dot"></div></div>
-        <div class="orbit orbit2"><div class="orbit-dot"></div></div>
-        <i class="fas fa-shield-alt s1-icon"></i>
-      </div>
-      <h1 class="s1-title">AUTONIX</h1>
-      <p class="s1-sub">INTELLIGENT RIDER SAFETY ASSISTANCE &amp; MONITORING</p>
-      <p class="s1-tagline">
-        <span>Safety for all</span> — Accessible to all
-      </p>
+<!-- ══════════════════════════════════════
+     SLIDE 0 — CINEMATIC INTRO SEQUENCE
+══════════════════════════════════════ -->
+<div class="sl on" id="s0">
+
+  <!-- SCENE A: speed lines + code boot -->
+  <div class="iscene vis" id="scA">
+    <div style="position:absolute;inset:0;background:#000;overflow:hidden">
+      <div id="lineField"></div>
+      <div id="scA-txt"><div id="scA-code">
+        BOOT::AUTONIX_SAFETY_CORE v2.0.5<br>
+        LOADING MEDIAPIPE::FACEMESH... ████████████ OK<br>
+        EAR_THRESHOLD = 0.25 | FRAME_RATE = 30fps<br>
+        ACCELEROMETER[X,Y,Z]::FUSION_ENGINE::READY<br>
+        GPS_MODULE::LOCK_ACQUIRED | SMS_GATEWAY::ONLINE<br>
+        CRASH_DETECTION::SENSITIVITY = HIGH<br>
+        EMERGENCY_CONTACTS::4 LOADED<br>
+        AUTONIX SYSTEM ONLINE ████████████ 100%
+      </div></div>
     </div>
   </div>
 
-  <!-- SLIDE 2 — THE PROBLEM -->
-  <div class="slide" id="s2">
-    <div class="s2-wrap">
-      <div>
-        <div class="slide-badge"><i class="fas fa-exclamation-triangle me-2"></i>THE PROBLEM</div>
-        <h2 class="slide-title">Road Safety<br>Remains a<br><span class="hl">Crisis</span></h2>
-        <p class="slide-body">
-          Driver fatigue and delayed emergency response are among the leading causes of fatal accidents worldwide.
-          Advanced Driver Assistance Systems (ADAS) exist — but are locked behind expensive luxury vehicles,
-          leaving millions of everyday riders unprotected.
-        </p>
-      </div>
-      <div class="stat-grid">
-        <div class="stat-box">
-          <span class="stat-num">1.35M</span>
-          <span class="stat-lbl">Road deaths per year globally</span>
-        </div>
-        <div class="stat-box">
-          <span class="stat-num">37%</span>
-          <span class="stat-lbl">Of crashes linked to fatigue</span>
-        </div>
-        <div class="stat-box">
-          <span class="stat-num">6 min</span>
-          <span class="stat-lbl">Avg. emergency response delay</span>
-        </div>
-        <div class="stat-box">
-          <span class="stat-num">95%</span>
-          <span class="stat-lbl">Vehicles lack built-in ADAS</span>
-        </div>
-      </div>
+  <!-- SCENE B: circuit board SVG -->
+  <div class="iscene" id="scB">
+    <div style="position:absolute;inset:0;background:#000;overflow:hidden">
+      <svg class="cir-svg" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice">
+        <defs><filter id="gf"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+        <g filter="url(#gf)" opacity=".75">
+          <path d="M0 540 L280 540 L280 220 L560 220 L560 540 L960 540" stroke="#ff0033" stroke-width="1.5" fill="none" stroke-dasharray="2200" stroke-dashoffset="2200"><animate attributeName="stroke-dashoffset" from="2200" to="0" dur="2s" fill="freeze"/></path>
+          <path d="M1920 540 L1640 540 L1640 820 L1360 820 L1360 540 L960 540" stroke="#ff0033" stroke-width="1.5" fill="none" stroke-dasharray="2200" stroke-dashoffset="2200"><animate attributeName="stroke-dashoffset" from="2200" to="0" dur="2s" begin=".35s" fill="freeze"/></path>
+          <path d="M960 0 L960 200 L780 200 L780 380" stroke="rgba(255,0,51,.5)" stroke-width="1" fill="none" stroke-dasharray="900" stroke-dashoffset="900"><animate attributeName="stroke-dashoffset" from="900" to="0" dur="1.5s" begin=".6s" fill="freeze"/></path>
+          <path d="M960 1080 L960 860 L1130 860 L1130 660" stroke="rgba(255,0,51,.5)" stroke-width="1" fill="none" stroke-dasharray="900" stroke-dashoffset="900"><animate attributeName="stroke-dashoffset" from="900" to="0" dur="1.5s" begin=".9s" fill="freeze"/></path>
+          <path d="M280 540 L560 220" stroke="rgba(255,0,51,.2)" stroke-width="1" fill="none" stroke-dasharray="400" stroke-dashoffset="400"><animate attributeName="stroke-dashoffset" from="400" to="0" dur="1s" begin="1.2s" fill="freeze"/></path>
+          <path d="M1640 540 L1360 820" stroke="rgba(255,0,51,.2)" stroke-width="1" fill="none" stroke-dasharray="400" stroke-dashoffset="400"><animate attributeName="stroke-dashoffset" from="400" to="0" dur="1s" begin="1.2s" fill="freeze"/></path>
+          <!-- nodes -->
+          <circle cx="280" cy="540" r="6" fill="#ff0033" opacity="0"><animate attributeName="opacity" from="0" to="1" dur=".3s" begin=".9s" fill="freeze"/></circle>
+          <circle cx="560" cy="220" r="6" fill="#ff0033" opacity="0"><animate attributeName="opacity" from="0" to="1" dur=".3s" begin="1.1s" fill="freeze"/></circle>
+          <circle cx="1640" cy="540" r="6" fill="#ff0033" opacity="0"><animate attributeName="opacity" from="0" to="1" dur=".3s" begin="1s" fill="freeze"/></circle>
+          <circle cx="1360" cy="820" r="6" fill="#ff0033" opacity="0"><animate attributeName="opacity" from="0" to="1" dur=".3s" begin="1.2s" fill="freeze"/></circle>
+          <circle cx="960" cy="540" r="10" fill="none" stroke="#ff0033" stroke-width="2.5" opacity="0"><animate attributeName="opacity" from="0" to="1" dur=".3s" begin="1.4s" fill="freeze"/></circle>
+          <line x1="935" y1="540" x2="985" y2="540" stroke="#ff0033" stroke-width="2" opacity="0"><animate attributeName="opacity" from="0" to="1" dur=".3s" begin="1.5s" fill="freeze"/></line>
+          <line x1="960" y1="515" x2="960" y2="565" stroke="#ff0033" stroke-width="2" opacity="0"><animate attributeName="opacity" from="0" to="1" dur=".3s" begin="1.5s" fill="freeze"/></line>
+          <text x="960" y="500" text-anchor="middle" font-family="Orbitron,sans-serif" font-size="16" fill="rgba(255,0,51,.55)" letter-spacing="8" opacity="0"><animate attributeName="opacity" from="0" to="1" dur=".5s" begin="1.7s" fill="freeze"/>SYSTEM NODE ACTIVE</text>
+        </g>
+      </svg>
     </div>
   </div>
 
-  <!-- SLIDE 3 — THE SOLUTION -->
-  <div class="slide" id="s3">
-    <div class="s3-wrap">
-      <div class="slide-badge"><i class="fas fa-lightbulb me-2"></i>THE SOLUTION</div>
-      <h2 class="slide-title">One App. <span class="hl">Complete Protection.</span></h2>
-      <p class="slide-body" style="max-width:700px;margin:0 auto 1rem;">
-        Autonix transforms any Android smartphone into a full-featured driver safety co-pilot —
-        no expensive hardware, no subscriptions, no vehicle modifications needed.
-      </p>
-      <div class="feature-pills">
-        <div class="pill"><i class="fas fa-eye"></i> Drowsiness Detection</div>
-        <div class="pill"><i class="fas fa-car-crash"></i> Crash Detection</div>
-        <div class="pill"><i class="fas fa-map-marked-alt"></i> Smart Navigation</div>
-        <div class="pill"><i class="fas fa-bell"></i> Emergency Alerts</div>
-        <div class="pill"><i class="fas fa-mobile-alt"></i> Smartphone Only</div>
-      </div>
+  <!-- SCENE C: eye forming -->
+  <div class="iscene" id="scC">
+    <div style="position:absolute;inset:0;background:#000;display:flex;align-items:center;justify-content:center">
+      <svg viewBox="0 0 900 450" style="width:min(92vw,1000px);filter:drop-shadow(0 0 22px rgba(255,0,51,.55))">
+        <defs><filter id="gf2"><feGaussianBlur stdDeviation="5"/></filter></defs>
+        <!-- glow copy -->
+        <path d="M60 225 Q450 30 840 225 Q450 420 60 225 Z" fill="rgba(255,0,51,.04)" filter="url(#gf2)"/>
+        <!-- eye outline -->
+        <path d="M60 225 Q450 30 840 225 Q450 420 60 225 Z" fill="none" stroke="rgba(255,0,51,.35)" stroke-width="1.5" stroke-dasharray="2400" stroke-dashoffset="2400"><animate attributeName="stroke-dashoffset" from="2400" to="0" dur="2.2s" fill="freeze"/></path>
+        <!-- iris -->
+        <circle cx="450" cy="225" r="115" fill="none" stroke="#ff0033" stroke-width="2.5" stroke-dasharray="724" stroke-dashoffset="724" opacity="0"><animate attributeName="opacity" from="0" to="1" dur=".1s" begin=".9s" fill="freeze"/><animate attributeName="stroke-dashoffset" from="724" to="0" dur="1.3s" begin=".9s" fill="freeze"/></circle>
+        <!-- inner ring -->
+        <circle cx="450" cy="225" r="75" fill="none" stroke="rgba(255,0,51,.4)" stroke-width="1" stroke-dasharray="472" stroke-dashoffset="472" opacity="0"><animate attributeName="opacity" from="0" to="1" dur=".1s" begin="1.4s" fill="freeze"/><animate attributeName="stroke-dashoffset" from="472" to="0" dur=".9s" begin="1.4s" fill="freeze"/></circle>
+        <!-- pupil -->
+        <circle cx="450" cy="225" r="46" fill="rgba(255,0,51,.18)" stroke="#ff0033" stroke-width="1.5" opacity="0"><animate attributeName="opacity" from="0" to="1" dur=".6s" begin="1.8s" fill="freeze"/></circle>
+        <!-- shine -->
+        <circle cx="485" cy="198" r="14" fill="rgba(255,255,255,.18)" opacity="0"><animate attributeName="opacity" from="0" to="1" dur=".4s" begin="2.1s" fill="freeze"/></circle>
+        <!-- scan line across -->
+        <line x1="60" y1="225" x2="60" y2="225" stroke="rgba(255,0,51,.7)" stroke-width="2" opacity="0">
+          <animate attributeName="x2" from="60" to="840" dur="1.1s" begin="2.3s" fill="freeze"/>
+          <animate attributeName="opacity" from="0" to="1" dur=".1s" begin="2.3s" fill="freeze"/>
+        </line>
+        <!-- landmark dots group -->
+        <g opacity="0"><animate attributeName="opacity" from="0" to="1" dur=".5s" begin="2.6s" fill="freeze"/>
+          <circle cx="450" cy="122" r="5" fill="#ff0033"/>
+          <circle cx="450" cy="328" r="5" fill="#ff0033"/>
+          <circle cx="60"  cy="225" r="5" fill="#ff0033"/>
+          <circle cx="840" cy="225" r="5" fill="#ff0033"/>
+          <circle cx="260" cy="155" r="4" fill="#ff0033"/>
+          <circle cx="640" cy="155" r="4" fill="#ff0033"/>
+          <circle cx="260" cy="295" r="4" fill="#ff0033"/>
+          <circle cx="640" cy="295" r="4" fill="#ff0033"/>
+          <!-- crosshair -->
+          <line x1="450" y1="122" x2="450" y2="328" stroke="rgba(255,0,51,.35)" stroke-width="1" stroke-dasharray="4,4"/>
+          <line x1="60"  y1="225" x2="840" y2="225" stroke="rgba(255,0,51,.35)" stroke-width="1" stroke-dasharray="4,4"/>
+        </g>
+        <text x="450" y="420" text-anchor="middle" font-family="Orbitron,sans-serif" font-size="16" fill="rgba(255,0,51,.65)" letter-spacing="10" opacity="0"><animate attributeName="opacity" from="0" to="1" dur=".5s" begin="2.9s" fill="freeze"/>DROWSINESS DETECTION ACTIVE</text>
+      </svg>
     </div>
   </div>
 
-  <!-- SLIDE 4 — DROWSINESS DETECTION -->
-  <div class="slide" id="s4">
-    <div class="s4-wrap">
-      <div>
-        <div class="slide-badge"><i class="fas fa-eye me-2"></i>FEATURE 01</div>
-        <h2 class="slide-title">Drowsiness<br><span class="hl">Detection</span><br>System</h2>
-        <p class="slide-body">
-          Real-time facial landmark analysis detects driver fatigue before it becomes dangerous,
-          triggering escalating alerts to keep drivers alert.
-        </p>
-        <ul class="tech-list">
-          <li><i class="fas fa-angle-right"></i><div><strong>MediaPipe FaceMesh</strong> — 468 facial landmarks tracked per frame</div></li>
-          <li><i class="fas fa-angle-right"></i><div><strong>EAR Algorithm</strong> — Eye Aspect Ratio calculated in real-time</div></li>
-          <li><i class="fas fa-angle-right"></i><div><strong>30+ FPS</strong> — Smooth processing on mid-range Android devices</div></li>
-          <li><i class="fas fa-angle-right"></i><div><strong>Adaptive Thresholds</strong> — Calibrates to each driver individually</div></li>
-        </ul>
-      </div>
-      <div class="ear-diagram">
-        <!-- SVG Eye -->
-        <div class="eye-svg-wrap">
-          <svg class="eye-svg" viewBox="0 0 200 80" width="200" height="80" xmlns="http://www.w3.org/2000/svg">
-            <!-- eye outline -->
-            <ellipse cx="100" cy="40" rx="90" ry="32" fill="none" stroke="rgba(255,0,51,.4)" stroke-width="1.5"/>
-            <!-- iris -->
-            <circle cx="100" cy="40" r="22" fill="none" stroke="rgba(255,0,51,.6)" stroke-width="2"/>
-            <!-- pupil -->
-            <circle cx="100" cy="40" r="10" fill="rgba(255,0,51,.3)"/>
-            <!-- landmark dots -->
-            <circle cx="46" cy="40" r="3" fill="#ff0033"/>
-            <circle cx="154" cy="40" r="3" fill="#ff0033"/>
-            <circle cx="100" cy="14" r="3" fill="#ff0033"/>
-            <circle cx="100" cy="66" r="3" fill="#ff0033"/>
-            <circle cx="73"  cy="22" r="3" fill="#ff0033"/>
-            <circle cx="127" cy="22" r="3" fill="#ff0033"/>
-            <circle cx="73"  cy="58" r="3" fill="#ff0033"/>
-            <circle cx="127" cy="58" r="3" fill="#ff0033"/>
-            <!-- EAR lines -->
-            <line x1="100" y1="14" x2="100" y2="66" stroke="rgba(255,0,51,.5)" stroke-width="1" stroke-dasharray="3,3"/>
-            <line x1="46"  y1="40" x2="154" y2="40" stroke="rgba(255,0,51,.5)" stroke-width="1" stroke-dasharray="3,3"/>
-          </svg>
-        </div>
-        <div class="ear-meter">
-          <div class="ear-label">EYE ASPECT RATIO (EAR)</div>
-          <div class="ear-bar-track"><div class="ear-bar-fill"></div></div>
-          <div class="ear-status" id="earStatus">● ALERT</div>
-        </div>
-        <div style="font-family:'Orbitron',sans-serif;font-size:.7rem;letter-spacing:2px;color:var(--dim);text-align:center;">
-          EAR &lt; 0.25 → DROWSY ALERT TRIGGERED
-        </div>
+  <!-- SCENE D: data rain + loading -->
+  <div class="iscene" id="scD">
+    <div style="position:absolute;inset:0;background:#000;overflow:hidden">
+      <div id="dataColWrap" style="position:absolute;inset:0;display:flex;justify-content:space-around;align-items:flex-start;overflow:hidden"></div>
+      <div id="scD-over">
+        <div class="scD-big">INTELLIGENT<br>SAFETY</div>
+        <div class="scD-mono">LOADING AUTONIX CORE...</div>
+        <div id="lbar-track"><div id="lbar-fill"></div></div>
       </div>
     </div>
   </div>
 
-  <!-- SLIDE 5 — CRASH DETECTION -->
-  <div class="slide" id="s5">
-    <div class="s5-wrap">
-      <div class="crash-visual">
-        <div class="impact-ring">
-          <i class="fas fa-car-crash impact-icon"></i>
+  <!-- LOGO REVEAL -->
+  <div class="iscene" id="scLOGO">
+    <div style="position:absolute;inset:0;background:#000">
+      <div class="lr-bg"></div>
+      <div class="lr-lines" id="lrLines"></div>
+      <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2.2rem;z-index:2">
+        <div class="lr-rings" id="lrRings">
+          <div class="lr-r1"></div><div class="lr-r2"></div><div class="lr-r3"></div>
+          <div class="lr-shield"><i class="fas fa-shield-alt"></i></div>
         </div>
-        <div class="countdown-demo">
-          <div class="countdown-label">EMERGENCY COUNTDOWN</div>
-          <div class="countdown-num" id="cdNum">30</div>
-          <div style="font-family:'Orbitron',sans-serif;font-size:.7rem;letter-spacing:2px;color:var(--gray);">
-            SECONDS UNTIL ALERT SENT
-          </div>
+        <div class="lr-tw">
+          <h1 class="lr-title">AUTONIX</h1>
+          <div class="lr-tu"></div>
         </div>
-      </div>
-      <div>
-        <div class="slide-badge"><i class="fas fa-car-crash me-2"></i>FEATURE 02</div>
-        <h2 class="slide-title">Crash Detection<br>&amp; <span class="hl">Emergency</span><br>Response</h2>
-        <p class="slide-body">
-          Sensor fusion technology detects sudden impacts and automatically initiates a 30-second countdown,
-          alerting emergency contacts with live GPS coordinates if no user cancellation occurs.
-        </p>
-        <ul class="tech-list">
-          <li><i class="fas fa-angle-right"></i><div><strong>Accelerometer + Gyroscope</strong> — Multi-axis impact detection</div></li>
-          <li><i class="fas fa-angle-right"></i><div><strong>GPS Coordinates</strong> — Exact location sent to contacts</div></li>
-          <li><i class="fas fa-angle-right"></i><div><strong>30-Second Cancel Window</strong> — Avoids false positives</div></li>
-          <li><i class="fas fa-angle-right"></i><div><strong>Automated SMS + SOS</strong> — Flashlight &amp; audio distress signal</div></li>
-        </ul>
+        <p class="lr-sub">INTELLIGENT RIDER SAFETY ASSISTANCE &amp; MONITORING</p>
+        <p class="lr-tag"><span>Safety for all</span> &mdash; Accessible to all</p>
       </div>
     </div>
   </div>
 
-  <!-- SLIDE 6 — TECH STACK -->
-  <div class="slide" id="s6">
-    <div class="s6-wrap">
-      <div class="slide-badge"><i class="fas fa-code me-2"></i>TECHNOLOGY</div>
-      <h2 class="slide-title">Built With <span class="hl">Cutting-Edge</span> Tools</h2>
-      <p class="slide-body" style="max-width:600px;margin:0 auto;">
-        Autonix is engineered on a modern Android-native stack, combining machine learning, sensor fusion, and cloud services into a single seamless experience.
-      </p>
-      <div class="tech-hex-grid">
-        <div class="hex-item">
-          <div class="hex-icon"><i class="fab fa-android"></i></div>
-          <div class="hex-name">ANDROID NATIVE</div>
-        </div>
-        <div class="hex-item">
-          <div class="hex-icon"><i class="fas fa-code"></i></div>
-          <div class="hex-name">KOTLIN / JAVA</div>
-        </div>
-        <div class="hex-item">
-          <div class="hex-icon"><i class="fas fa-brain"></i></div>
-          <div class="hex-name">MEDIAPIPE ML</div>
-        </div>
-        <div class="hex-item">
-          <div class="hex-icon"><i class="fas fa-database"></i></div>
-          <div class="hex-name">FIREBASE</div>
-        </div>
-        <div class="hex-item">
-          <div class="hex-icon"><i class="fas fa-map"></i></div>
-          <div class="hex-name">OSMDROID GPS</div>
-        </div>
-      </div>
-    </div>
-  </div>
+</div><!-- /s0 -->
 
-  <!-- SLIDE 7 — TEAM -->
-  <div class="slide" id="s7">
-    <div class="s7-wrap">
-      <div class="slide-badge"><i class="fas fa-users me-2"></i>THE TEAM</div>
-      <h2 class="slide-title">Meet the <span class="hl">Developers</span></h2>
-      <div class="team-cards">
-        <div class="team-card">
-          <div class="team-avatar"><i class="fas fa-user"></i></div>
-          <div class="team-name">MAIZAH SHAIKH</div>
-          <div class="team-role">Lead Developer &amp; Research</div>
-          <div class="team-inst">Royal College of Arts, Science &amp; Commerce</div>
-        </div>
-        <div class="team-card">
-          <div class="team-avatar"><i class="fas fa-user"></i></div>
-          <div class="team-name">YATIN ANCHAN</div>
-          <div class="team-role">Lead Developer &amp; Architecture</div>
-          <div class="team-inst">Royal College of Arts, Science &amp; Commerce</div>
-        </div>
+<!-- ━━ SLIDE 1: THE PROBLEM ━━ -->
+<div class="sl" id="s1">
+  <div class="sw g2 gc12 ain">
+    <div>
+      <div class="sb"><i class="fas fa-exclamation-triangle"></i>THE PROBLEM</div>
+      <h2 class="st">Road Safety<br>Remains a<br><span class="hl">Global Crisis</span></h2>
+      <p class="sb2">Driver fatigue and delayed emergency response are among the leading causes of fatal road accidents worldwide. Advanced Driver Assistance Systems exist — but locked inside luxury vehicles, leaving millions unprotected every day.</p>
+    </div>
+    <div class="sg">
+      <div class="sbox"><span class="snum">1.35M</span><span class="slbl">Road deaths globally per year</span></div>
+      <div class="sbox"><span class="snum">37%</span><span class="slbl">Crashes linked to driver fatigue</span></div>
+      <div class="sbox"><span class="snum">6 min</span><span class="slbl">Average emergency response delay</span></div>
+      <div class="sbox"><span class="snum">95%</span><span class="slbl">Vehicles lack built-in ADAS</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ━━ SLIDE 2: THE SOLUTION ━━ -->
+<div class="sl" id="s2">
+  <div class="sw ain" style="text-align:center;max-width:1050px">
+    <div class="sb" style="margin:0 auto 1.4rem"><i class="fas fa-lightbulb"></i>OUR SOLUTION</div>
+    <h2 class="st">One App. <span class="hl">Complete Protection.</span></h2>
+    <p class="sb2" style="max-width:680px;margin:0 auto">Autonix transforms any Android smartphone into a full-featured driver safety co-pilot — no expensive hardware, no vehicle modifications needed. Just install, mount, and drive protected.</p>
+    <div class="pr">
+      <div class="pill"><i class="fas fa-eye"></i>Drowsiness Detection</div>
+      <div class="pill"><i class="fas fa-car-crash"></i>Crash Detection</div>
+      <div class="pill"><i class="fas fa-map-marked-alt"></i>Smart Navigation</div>
+      <div class="pill"><i class="fas fa-bell"></i>Emergency Alerts</div>
+      <div class="pill"><i class="fas fa-mobile-alt"></i>Smartphone Only</div>
+    </div>
+  </div>
+</div>
+
+<!-- ━━ SLIDE 3: DROWSINESS ━━ -->
+<div class="sl" id="s3">
+  <div class="sw g2 gc21 ain">
+    <div>
+      <div class="sb"><i class="fas fa-eye"></i>FEATURE 01</div>
+      <h2 class="st">Drowsiness<br><span class="hl">Detection</span></h2>
+      <p class="sb2">Real-time facial landmark analysis detects driver fatigue before it becomes dangerous, triggering escalating alerts to keep drivers awake and safe on every journey.</p>
+      <ul class="tl">
+        <li><i class="fas fa-angle-right"></i><div><strong>MediaPipe FaceMesh</strong> — 468 facial landmarks tracked per frame</div></li>
+        <li><i class="fas fa-angle-right"></i><div><strong>EAR Algorithm</strong> — Eye Aspect Ratio calculated in real-time</div></li>
+        <li><i class="fas fa-angle-right"></i><div><strong>30+ FPS</strong> — Smooth processing on mid-range Android devices</div></li>
+        <li><i class="fas fa-angle-right"></i><div><strong>Adaptive Thresholds</strong> — Calibrates to each driver individually</div></li>
+      </ul>
+    </div>
+    <div class="ear-box">
+      <svg viewBox="0 0 260 110" width="240" style="filter:drop-shadow(0 0 8px var(--glow))">
+        <ellipse cx="130" cy="55" rx="118" ry="44" fill="none" stroke="rgba(255,0,51,.35)" stroke-width="1.5"/>
+        <circle cx="130" cy="55" r="28" fill="none" stroke="rgba(255,0,51,.6)" stroke-width="2"/>
+        <circle cx="130" cy="55" r="12" fill="rgba(255,0,51,.25)"/>
+        <circle cx="145" cy="44" r="5" fill="rgba(255,255,255,.2)"/>
+        <circle cx="22" cy="55" r="4" fill="#ff0033"/><circle cx="238" cy="55" r="4" fill="#ff0033"/>
+        <circle cx="130" cy="16" r="4" fill="#ff0033"/><circle cx="130" cy="94" r="4" fill="#ff0033"/>
+        <circle cx="82" cy="28" r="3" fill="#ff0033"/><circle cx="178" cy="28" r="3" fill="#ff0033"/>
+        <circle cx="82" cy="82" r="3" fill="#ff0033"/><circle cx="178" cy="82" r="3" fill="#ff0033"/>
+        <line x1="130" y1="16" x2="130" y2="94" stroke="rgba(255,0,51,.4)" stroke-width="1" stroke-dasharray="3,3"/>
+        <line x1="22" y1="55" x2="238" y2="55" stroke="rgba(255,0,51,.4)" stroke-width="1" stroke-dasharray="3,3"/>
+      </svg>
+      <div style="width:100%">
+        <div style="font-family:'Orbitron',sans-serif;font-size:.72rem;letter-spacing:2px;color:var(--r);margin-bottom:.6rem">EYE ASPECT RATIO (EAR)</div>
+        <div class="ear-track"><div class="ear-fill"></div></div>
+        <div class="ear-st" id="earSt" style="margin-top:.4rem">● ALERT</div>
       </div>
-      <div class="college-badge">
-        <i class="fas fa-university me-2"></i>
-        ROYAL COLLEGE OF ARTS, SCIENCE &amp; COMMERCE — 2025
+      <div style="font-family:'Orbitron',sans-serif;font-size:.65rem;letter-spacing:2px;color:var(--d);text-align:center">EAR &lt; 0.25 → DROWSY ALERT TRIGGERED</div>
+      <div class="ssf"><div class="fc tl"></div><div class="fc tr"></div><div class="fc bl"></div><div class="fc br"></div>
+        <img src="images/screenshots/screenshot-2.png" alt="EAR UI" style="width:190px">
+        <div class="sov"></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ━━ SLIDE 4: CRASH DETECTION ━━ -->
+<div class="sl" id="s4">
+  <div class="sw g2 gc12r ain">
+    <div class="imp-box">
+      <div class="imp-ring"><i class="fas fa-car-crash imp-ic"></i></div>
+      <div class="cd-box">
+        <div class="cd-lbl"><i class="fas fa-exclamation-triangle"></i> EMERGENCY COUNTDOWN</div>
+        <div class="cd-num" id="cdNum">30</div>
+        <div class="cd-sub">SECONDS UNTIL ALERT SENT</div>
+      </div>
+      <div class="ssf"><div class="fc tl"></div><div class="fc tr"></div><div class="fc bl"></div><div class="fc br"></div>
+        <img src="images/screenshots/screenshot-4.png" alt="Crash UI" style="width:190px">
+        <div class="sov"></div></div>
+    </div>
+    <div>
+      <div class="sb"><i class="fas fa-car-crash"></i>FEATURE 02</div>
+      <h2 class="st">Crash Detection<br>&amp; <span class="hl">Emergency<br>Response</span></h2>
+      <p class="sb2">Multi-axis sensor fusion detects sudden impacts and initiates a 30-second countdown. Emergency contacts receive automated SMS with live GPS coordinates if no user cancellation occurs.</p>
+      <ul class="tl">
+        <li><i class="fas fa-angle-right"></i><div><strong>Accelerometer + Gyroscope</strong> — Multi-axis impact detection</div></li>
+        <li><i class="fas fa-angle-right"></i><div><strong>Live GPS Coordinates</strong> — Exact location dispatched instantly</div></li>
+        <li><i class="fas fa-angle-right"></i><div><strong>30-Second Cancel Window</strong> — Prevents false positives</div></li>
+        <li><i class="fas fa-angle-right"></i><div><strong>SOS Signal</strong> — Flashlight + audio distress pattern</div></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ━━ SLIDE 5: SMART NAVIGATION ━━ -->
+<div class="sl" id="s5">
+  <div class="sw g2 gc21 ain">
+    <div>
+      <div class="sb" style="color:var(--cyan);background:rgba(0,229,255,.08);border-color:rgba(0,229,255,.2)"><i class="fas fa-map-marked-alt"></i>FEATURE 03</div>
+      <h2 class="st">Smart Trip<br><span style="color:var(--cyan);text-shadow:0 0 20px var(--cyan2)">Navigation</span></h2>
+      <p class="sb2">Intelligent route planning with offline maps, real-time GPS tracking, and fleet management tools for efficient logistics and trip performance analytics.</p>
+      <ul class="tl">
+        <li><i class="fas fa-angle-right" style="color:var(--cyan)"></i><div><strong>OSMdroid Integration</strong> — Full offline mapping support</div></li>
+        <li><i class="fas fa-angle-right" style="color:var(--cyan)"></i><div><strong>Real-time Route Optimization</strong> — Dynamic path adjustments</div></li>
+        <li><i class="fas fa-angle-right" style="color:var(--cyan)"></i><div><strong>Performance Analytics</strong> — Trip-by-trip safety scoring</div></li>
+        <li><i class="fas fa-angle-right" style="color:var(--cyan)"></i><div><strong>Fleet Management</strong> — Trip assignment &amp; monitoring</div></li>
+      </ul>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:1.5rem">
+      <div class="map-box">
+        <div class="map-grid"></div>
+        <svg style="position:absolute;inset:0;width:100%;height:100%" viewBox="0 0 320 300">
+          <path d="M40 240 Q90 170 160 110 Q220 55 280 85" stroke="rgba(0,229,255,.4)" stroke-width="2" fill="none" stroke-dasharray="500" stroke-dashoffset="500"><animate attributeName="stroke-dashoffset" from="500" to="0" dur="2.5s" repeatCount="indefinite"/></path>
+          <circle cx="40" cy="240" r="6" fill="var(--r)"/>
+          <circle cx="280" cy="85" r="6" fill="var(--cyan)"/>
+        </svg>
+        <div class="map-ping"></div>
+        <div class="map-car-el">🚗</div>
+      </div>
+      <div class="ssf"><div class="fc tl"></div><div class="fc tr"></div><div class="fc bl"></div><div class="fc br"></div>
+        <img src="images/screenshots/screenshot-5.png" alt="Nav UI" style="width:190px">
+        <div class="sov"></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ━━ SLIDE 6: ALERT SYSTEM ━━ -->
+<div class="sl" id="s6">
+  <div class="sw ain" style="max-width:1100px">
+    <div class="sb"><i class="fas fa-bell"></i>FEATURE 04</div>
+    <h2 class="st">General Safety <span class="hl">Alert System</span></h2>
+    <p class="sb2" style="max-width:700px">Multi-level alert escalation across visual, audio, and haptic channels ensures the driver is always warned — from subtle nudges to full emergency protocols.</p>
+    <div class="al-row" style="margin-top:2rem">
+      <div class="al-step" data-num="01"><div class="al-icon"><i class="fas fa-eye-slash"></i></div><div class="al-txt">EYES CLOSING<br>DETECTED</div></div>
+      <div class="al-step" data-num="02"><div class="al-icon"><i class="fas fa-volume-up"></i></div><div class="al-txt">AUDIO ALERT<br>TRIGGERED</div></div>
+      <div class="al-step" data-num="03"><div class="al-icon"><i class="fas fa-vibrate"></i></div><div class="al-txt">HAPTIC<br>VIBRATION</div></div>
+      <div class="al-step" data-num="04"><div class="al-icon"><i class="fas fa-exclamation-triangle"></i></div><div class="al-txt">FULL SCREEN<br>WARNING</div></div>
+      <div class="al-step" data-num="05"><div class="al-icon"><i class="fas fa-phone-alt"></i></div><div class="al-txt">EMERGENCY<br>CONTACT ALERT</div></div>
+    </div>
+    <div style="display:flex;gap:1.5rem;justify-content:center;margin-top:2rem;flex-wrap:wrap">
+      <div class="ssf"><div class="fc tl"></div><div class="fc tr"></div><div class="fc bl"></div><div class="fc br"></div>
+        <img src="images/screenshots/screenshot-1.png" alt="Dashboard" style="width:160px"><div class="sov"></div></div>
+      <div class="ssf"><div class="fc tl"></div><div class="fc tr"></div><div class="fc bl"></div><div class="fc br"></div>
+        <img src="images/screenshots/screenshot-3.png" alt="Trip Log" style="width:160px"><div class="sov"></div></div>
+      <div class="ssf"><div class="fc tl"></div><div class="fc tr"></div><div class="fc bl"></div><div class="fc br"></div>
+        <img src="images/screenshots/screenshot-6.png" alt="Nav" style="width:160px"><div class="sov"></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ━━ SLIDE 7: APP SCREENSHOTS ━━ -->
+<div class="sl" id="s7">
+  <div class="sw ain" style="text-align:center;max-width:1200px;display:flex;flex-direction:column;align-items:center;gap:2rem">
+    <div>
+      <div class="sb"><i class="fas fa-images"></i>APP SHOWCASE</div>
+      <h2 class="st">Interface <span class="hl">Gallery</span></h2>
+    </div>
+    <div class="ss-row">
+      <div class="ss-item">
+        <div class="ssf"><div class="fc tl"></div><div class="fc tr"></div><div class="fc bl"></div><div class="fc br"></div>
+          <img src="images/screenshots/screenshot-1.png" alt="Dashboard" style="width:155px"><div class="sov"></div></div>
+        <div class="ss-lbl">DASHBOARD</div>
+      </div>
+      <div class="ss-item">
+        <div class="ssf"><div class="fc tl"></div><div class="fc tr"></div><div class="fc bl"></div><div class="fc br"></div>
+          <img src="images/screenshots/screenshot-2.png" alt="Eye Monitor" style="width:155px"><div class="sov"></div></div>
+        <div class="ss-lbl">EYE MONITOR</div>
+      </div>
+      <div class="ss-item">
+        <div class="ssf"><div class="fc tl"></div><div class="fc tr"></div><div class="fc bl"></div><div class="fc br"></div>
+          <img src="images/screenshots/screenshot-3.png" alt="Trip Log" style="width:155px"><div class="sov"></div></div>
+        <div class="ss-lbl">TRIP HISTORY</div>
+      </div>
+      <div class="ss-item">
+        <div class="ssf"><div class="fc tl"></div><div class="fc tr"></div><div class="fc bl"></div><div class="fc br"></div>
+          <img src="images/screenshots/screenshot-4.png" alt="SOS" style="width:155px"><div class="sov"></div></div>
+        <div class="ss-lbl">SOS SCREEN</div>
+      </div>
+      <div class="ss-item">
+        <div class="ssf"><div class="fc tl"></div><div class="fc tr"></div><div class="fc bl"></div><div class="fc br"></div>
+          <img src="images/screenshots/screenshot-6.png" alt="Nav" style="width:155px"><div class="sov"></div></div>
+        <div class="ss-lbl">NAV BOARD</div>
       </div>
     </div>
   </div>
+</div>
+
+<!-- ━━ SLIDE 8: TECH STACK ━━ -->
+<div class="sl" id="s8">
+  <div class="sw ain" style="text-align:center;max-width:1000px">
+    <div class="sb"><i class="fas fa-code"></i>TECHNOLOGY STACK</div>
+    <h2 class="st">Built With <span class="hl">Cutting-Edge</span> Tools</h2>
+    <p class="sb2" style="max-width:580px;margin:0 auto">Modern Android-native stack combining machine learning, sensor fusion, and cloud services into one seamless safety experience.</p>
+    <div class="hg">
+      <div class="hc"><div class="hci"><i class="fab fa-android"></i></div><div class="hcn">ANDROID<br>NATIVE</div></div>
+      <div class="hc"><div class="hci"><i class="fas fa-code"></i></div><div class="hcn">KOTLIN<br>/ JAVA</div></div>
+      <div class="hc"><div class="hci"><i class="fas fa-brain"></i></div><div class="hcn">MEDIAPIPE<br>ML</div></div>
+      <div class="hc"><div class="hci"><i class="fas fa-database"></i></div><div class="hcn">FIREBASE<br>CLOUD</div></div>
+      <div class="hc"><div class="hci"><i class="fas fa-map"></i></div><div class="hcn">OSMDROID<br>GPS</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ━━ SLIDE 9: TEAM ━━ -->
+<div class="sl" id="s9">
+  <div class="sw ain" style="text-align:center;max-width:900px">
+    <div class="sb"><i class="fas fa-users"></i>THE TEAM</div>
+    <h2 class="st">Meet the <span class="hl">Developers</span></h2>
+    <div class="trow">
+      <div class="tcard">
+        <div class="tav"><i class="fas fa-user"></i></div>
+        <div class="tn">MAIZAH SHAIKH</div>
+        <div class="tr2">Lead Developer &amp; Research</div>
+        <div class="ti">Royal College of Arts,<br>Science &amp; Commerce</div>
+      </div>
+      <div class="tcard">
+        <div class="tav"><i class="fas fa-user"></i></div>
+        <div class="tn">YATIN ANCHAN</div>
+        <div class="tr2">Lead Developer &amp; Architecture</div>
+        <div class="ti">Royal College of Arts,<br>Science &amp; Commerce</div>
+      </div>
+    </div>
+    <div class="cbadge"><i class="fas fa-university" style="margin-right:.5rem"></i>ROYAL COLLEGE OF ARTS, SCIENCE &amp; COMMERCE &mdash; 2025</div>
+  </div>
+</div>
 
 </div><!-- /stage -->
 
 <script>
-  // ── CURSOR ──
-  const cursor = document.getElementById('cursor');
-  document.addEventListener('mousemove', e => {
-    cursor.style.left = e.clientX + 'px';
-    cursor.style.top  = e.clientY + 'px';
-  });
+// CURSOR
+const cur=document.getElementById('cur'),cur2=document.getElementById('cur2');
+let mx=0,my=0,cx=0,cy=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY});
+(function animC(){cx+=(mx-cx)*.18;cy+=(my-cy)*.18;cur.style.left=mx+'px';cur.style.top=my+'px';cur2.style.left=cx+'px';cur2.style.top=cy+'px';requestAnimationFrame(animC)})();
 
-  // ── SLIDES ──
-  const slides = Array.from(document.querySelectorAll('.slide'));
-  const TOTAL  = slides.length;
-  let current  = 0;
-  let timer    = null;
-  const DURATIONS = [5000, 7000, 6000, 8000, 8000, 7000, 7000]; // ms per slide
-
-  // build dots
-  const dotsEl = document.getElementById('nav-dots');
-  slides.forEach((_,i)=>{
-    const d = document.createElement('div');
-    d.className = 'dot' + (i===0?' active':'');
-    d.addEventListener('click', ()=> goTo(i));
-    dotsEl.appendChild(d);
-  });
-
-  function updateDots(idx){
-    dotsEl.querySelectorAll('.dot').forEach((d,i)=>{
-      d.className = 'dot' + (i===idx?' active':'');
-    });
+// BUILD SPEED STREAKS
+(function(){
+  const lf=document.getElementById('lineField');
+  for(let i=0;i<65;i++){
+    const s=document.createElement('div');s.className='streak';
+    s.style.cssText=`top:${Math.random()*100}%;width:${100+Math.random()*350}px;animation-duration:${.25+Math.random()*.7}s;animation-delay:${Math.random()*4}s;opacity:${.25+Math.random()*.75}`;
+    lf.appendChild(s);
   }
+})();
 
-  function updateCounter(idx){
-    const n = String(idx+1).padStart(2,'0');
-    const t = String(TOTAL).padStart(2,'0');
-    document.getElementById('slide-counter').textContent = n + ' / ' + t;
+// BUILD DATA RAIN
+(function(){
+  const w=document.getElementById('dataColWrap');
+  const chars='01ABCDEF9823';
+  for(let c=0;c<22;c++){
+    const d=document.createElement('div');d.className='drain';
+    let s='';for(let r=0;r<50;r++)s+=chars[Math.floor(Math.random()*chars.length)]+' ';
+    d.textContent=s;
+    d.style.cssText=`left:${(c/22)*100}%;animation-duration:${2+Math.random()*3}s;animation-delay:${Math.random()*2}s;opacity:${.2+Math.random()*.4}`;
+    w.appendChild(d);
   }
+})();
 
-  function startProgress(dur){
-    const bar = document.getElementById('progress-bar');
-    bar.style.transition = 'none';
-    bar.style.width = '0%';
-    // force reflow
-    bar.getBoundingClientRect();
-    bar.style.transition = `width ${dur}ms linear`;
-    bar.style.width = '100%';
+// LOAD BAR animation in scD
+function animLoadBar(){
+  const fill=document.getElementById('lbar-fill');
+  if(!fill)return;
+  fill.style.width='0%';
+  let v=0;
+  const iv=setInterval(()=>{v+=2;fill.style.width=v+'%';if(v>=100)clearInterval(iv);},30);
+}
+
+// BUILD LOGO LINES
+(function(){
+  const ll=document.getElementById('lrLines');
+  for(let i=0;i<28;i++){
+    const l=document.createElement('div');l.className='lrl';
+    l.style.cssText=`transform:translateX(-50%) translateY(-50%) rotate(${i*(360/28)}deg);top:50%;left:50%;animation-delay:${i*.04}s`;
+    ll.appendChild(l);
   }
+})();
 
-  function flashGlitch(){
-    const f = document.createElement('div');
-    f.className = 'glitch-flash';
-    document.body.appendChild(f);
-    setTimeout(()=> f.remove(), 400);
+// BUILD PARTICLES
+(function(){
+  const rr=document.getElementById('lrRings');
+  for(let i=0;i<10;i++){
+    const p=document.createElement('div');p.className='lr-particle';
+    p.style.cssText=`--ps:${(i/10)*360}deg;--pr:${145+Math.random()*20}px;top:50%;left:50%;animation-duration:${6+Math.random()*5}s;animation-delay:${Math.random()*2}s`;
+    rr.appendChild(p);
   }
+})();
 
-  function goTo(idx){
-    clearTimeout(timer);
-    flashGlitch();
+// COUNTDOWN
+let cdV=30;
+setInterval(()=>{cdV=cdV>0?cdV-1:30;const e=document.getElementById('cdNum');if(e)e.textContent=cdV;},1000);
 
-    slides[current].classList.remove('active','anim-in');
-    current = (idx + TOTAL) % TOTAL;
-    slides[current].classList.add('active');
-    // trigger reflow then add animation
-    slides[current].getBoundingClientRect();
-    slides[current].classList.add('anim-in');
+// SLIDE ENGINE
+const SLIDES=Array.from(document.querySelectorAll('.sl'));
+const TOTAL=SLIDES.length;
+let current=0,stimer=null;
 
-    updateDots(current);
-    updateCounter(current);
+// Intro sub-scene config
+const ISCENES=['scA','scB','scC','scD','scLOGO'];
+const ITIMES  =[2800, 2600, 3200, 2800, 4000];
+const ITOTAL  =ITIMES.reduce((a,b)=>a+b,0); // ~15.4s
 
-    const dur = DURATIONS[current];
-    startProgress(dur);
-    timer = setTimeout(()=> goTo(current+1), dur);
+// Per-slide durations (0 = intro)
+const DURS=[ITOTAL,7000,6500,9000,9000,8500,8000,8500,7500,7000];
+
+// Build nav dots
+const nd=document.getElementById('ndots');
+SLIDES.forEach((_,i)=>{
+  const d=document.createElement('div');d.className='dot'+(i===0?' on':'');
+  d.addEventListener('click',()=>goTo(i));nd.appendChild(d);
+});
+
+function updUI(i){
+  nd.querySelectorAll('.dot').forEach((d,j)=>d.className='dot'+(j===i?' on':''));
+  document.getElementById('ctr').textContent=String(i+1).padStart(2,'0')+' / '+String(TOTAL).padStart(2,'0');
+}
+function startPbar(dur){
+  const b=document.getElementById('pbar');b.style.transition='none';b.style.width='0%';
+  b.getBoundingClientRect();b.style.transition=`width ${dur}ms linear`;b.style.width='100%';
+}
+function flash(){
+  const f=document.createElement('div');f.className='gfl';document.body.appendChild(f);setTimeout(()=>f.remove(),450);
+}
+function goTo(idx){
+  clearTimeout(stimer);flash();
+  SLIDES[current].classList.remove('on','ain');
+  current=(idx+TOTAL)%TOTAL;
+  SLIDES[current].classList.add('on');
+  SLIDES[current].getBoundingClientRect();
+  SLIDES[current].classList.add('ain');
+  updUI(current);
+  const dur=DURS[current];
+  startPbar(dur);
+  stimer=setTimeout(()=>goTo(current+1),dur);
+}
+
+function runIntro(){
+  let t=0;
+  ISCENES.forEach((id,i)=>{
+    setTimeout(()=>{
+      if(i>0)document.getElementById(ISCENES[i-1]).classList.remove('vis');
+      const sc=document.getElementById(id);
+      if(sc)sc.classList.add('vis');
+      if(id==='scD')setTimeout(animLoadBar,400);
+    },t);
+    t+=ITIMES[i];
+  });
+}
+
+// INIT
+window.addEventListener('load',()=>{
+  try{document.documentElement.requestFullscreen();}catch(e){}
+  SLIDES[0].classList.add('on','ain');
+  updUI(0);
+  runIntro();
+  startPbar(DURS[0]);
+  stimer=setTimeout(()=>goTo(1),DURS[0]);
+});
+
+// Keyboard
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key==='ArrowDown')goTo(current+1);
+  if(e.key==='ArrowLeft' ||e.key==='ArrowUp'  )goTo(current-1);
+  if(e.key==='f'||e.key==='F'){
+    if(!document.fullscreenElement)document.documentElement.requestFullscreen();
+    else document.exitFullscreen();
   }
-
-  // keyboard
-  document.addEventListener('keydown', e=>{
-    if(e.key==='ArrowRight'||e.key==='ArrowDown') goTo(current+1);
-    if(e.key==='ArrowLeft' ||e.key==='ArrowUp')   goTo(current-1);
-  });
-
-  // touch swipe
-  let tx=0;
-  document.addEventListener('touchstart', e=> tx=e.touches[0].clientX);
-  document.addEventListener('touchend',   e=>{
-    const dx = e.changedTouches[0].clientX - tx;
-    if(dx < -50) goTo(current+1);
-    if(dx >  50) goTo(current-1);
-  });
-
-  // ── countdown demo on slide 5 ──
-  let cdVal = 30;
-  setInterval(()=>{
-    cdVal = cdVal > 0 ? cdVal-1 : 30;
-    const el = document.getElementById('cdNum');
-    if(el) el.textContent = cdVal;
-  }, 1000);
-
-  // ── EAR status label ──
-  setInterval(()=>{
-    const el = document.getElementById('earStatus');
-    if(!el) return;
-    // sync with CSS animation (3s)
-    // just toggle label
-  }, 3000);
-
-  // ── init fullscreen on load ──
-  window.addEventListener('load', ()=>{
-    const el = document.documentElement;
-    if(el.requestFullscreen) el.requestFullscreen().catch(()=>{});
-    // start first slide
-    slides[0].classList.add('anim-in');
-    updateCounter(0);
-    startProgress(DURATIONS[0]);
-    timer = setTimeout(()=> goTo(1), DURATIONS[0]);
-  });
-
-  // click to advance
-  document.getElementById('stage').addEventListener('click', e=>{
-    if(e.target.closest('.dot')) return;
-    goTo(current+1);
-  });
+});
+// Click advance
+document.getElementById('stage').addEventListener('click',e=>{
+  if(e.target.closest('.dot'))return;goTo(current+1);
+});
+// Swipe
+let tx=0;
+document.addEventListener('touchstart',e=>tx=e.touches[0].clientX,{passive:true});
+document.addEventListener('touchend',e=>{
+  const dx=e.changedTouches[0].clientX-tx;
+  if(dx<-50)goTo(current+1);if(dx>50)goTo(current-1);
+},{passive:true});
 </script>
 </body>
 </html>
